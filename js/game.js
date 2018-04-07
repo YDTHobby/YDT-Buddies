@@ -6,8 +6,8 @@ window.addEventListener("load", function() {
         .include("Sprites, Scenes, Input, Touch, UI")
         // Maximize this game to whatever the size of the browser is
         .setup({
-            width: 480,
-            height: 320
+            width: 320,
+            height: 480
         })
         // And turn on default input controls and touch input (for UI)
         .controls().touch();
