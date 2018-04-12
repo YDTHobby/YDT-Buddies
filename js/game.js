@@ -71,9 +71,7 @@ window.addEventListener('load', function() {
             x: true,
             y: true
         }, {
-            minX: -50,
             minY: 120,
-            maxX: 256 * 16,
             maxY: 500
         });
     });
