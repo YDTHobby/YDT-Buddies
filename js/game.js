@@ -28,24 +28,56 @@ window.addEventListener('load', function() {
                 this.p.x = 150;
                 this.p.y = 380;
             }
-
         }
+
+    });
+
+    Q.Sprite.extend("Goomba", { // WIP colocarlo en un lugar apropiado del escenario
+        init: function(p) {
+            this._super(p, {
+                sheet: 'goomba',
+                x: 150,
+                y: 500,
+                vx: 100
+            });
+            this.add('2d, aiBounce');
+
+            this.on("bump.top",function(collision) { // Si Mario le pisa, muere
+              if(collision.obj.isA("Mario")) { 
+                this.destroy();
+                collision.obj.p.vy = -300;
+              }
+            });
+
+            this.on("bump.left,bump.right,bump.bottom",function(collision) { // Si toca a Mario desde cualquier otro lado, lo mata
+              if(collision.obj.isA("Mario")) {
+                collision.obj.destroy();
+              }
+            });
+        },
+
+        step: function(dt) {
+            if(this.p.y > 650){ // Si el goomba cae por debajo del escenario, muere
+                this.destroy();
+            }
+        }
+
     });
 
     Q.scene('level1', function(stage) {
         Q.stageTMX('level.tmx', stage);
 
         var mario = stage.insert(new Q.Mario());
+        var goomba = stage.insert(new Q.Goomba());
+
         stage.add("viewport").follow(mario);
-        stage.viewport.offsetY = 160;
-
-
-
-        
+        stage.viewport.offsetY = 160;    
     });
 
-    Q.loadTMX('level.tmx, mario_small.png, mario_small.json', function() {
+
+    Q.loadTMX('level.tmx, mario_small.png, mario_small.json, goomba.png, goomba.json', function() {
         Q.compileSheets('mario_small.png', 'mario_small.json');
+        Q.compileSheets('goomba.png', 'goomba.json');
         Q.stageScene('level1');
     });
 });
