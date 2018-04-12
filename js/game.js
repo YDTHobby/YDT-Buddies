@@ -67,9 +67,16 @@ window.addEventListener('load', function() {
         var mario = stage.insert(new Q.Mario());
         var goomba = stage.insert(new Q.Goomba());
 
-        stage.add("viewport").follow(mario, { x: true, y: true }, { minX: -100, maxX: 256 * 16, minY: 125, maxY: 32 * 16 });
+        stage.add("viewport").follow(mario, {
+            x: true,
+            y: true
+        }, {
+            minX: -50,
+            minY: 120,
+            maxX: 256 * 16,
+            maxY: 500
+        });
     });
-
 
     Q.loadTMX('level.tmx, mario_small.png, mario_small.json, goomba.png, goomba.json', function() {
         Q.compileSheets('mario_small.png', 'mario_small.json');
