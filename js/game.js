@@ -22,8 +22,8 @@ window.addEventListener('load', function() {
             this.add('2d, platformerControls');
         },
 
-        step: function(dt){
-            if(this.p.y > 580){
+        step: function(dt) {
+            if (this.p.y > 580) { // Si Mario cae por debajo del escenario, vuelve al principio 
                 this.p.x = 150;
                 this.p.y = 380;
             }
@@ -31,19 +31,49 @@ window.addEventListener('load', function() {
 
     });
 
-    Q.scene('level1', function(stage) {
-        Q.stageTMX('level.tmx', stage);
+    Q.Sprite.extend("Goomba", { // WIP colocarlo en un lugar apropiado del escenario
+        init: function(p) {
+            this._super(p, {
+                sheet: 'goomba',
+                x: 150,
+                y: 500,
+                vx: 100
+            });
+            this.add('2d, aiBounce');
 
-        var mario = stage.insert(new Q.Mario());
-        stage.add("viewport").follow(mario, {x: true, y: true},{minX: -100, maxX: 256*16, minY: 125, maxY: 32*16});
+            this.on("bump.top", function(collision) { // Si Mario le pisa, muere
+                if (collision.obj.isA("Mario")) {
+                    this.destroy();
+                    collision.obj.p.vy = -300;
+                }
+            });
 
-        stage.viewport.offsetX = -10;
-        stage.viewport.offsetY = 168;
+            this.on("bump.left,bump.right,bump.bottom", function(collision) { // Si toca a Mario desde cualquier otro lado, lo mata
+                if (collision.obj.isA("Mario")) {
+                    collision.obj.destroy();
+                }
+            });
+        },
 
+        step: function(dt) {
+            if (this.p.y > 580) { // Si el goomba cae por debajo del escenario, muere
+                this.destroy();
+            }
+        }
     });
 
-    Q.loadTMX('level.tmx, mario_small.png, mario_small.json', function() {
+    Q.scene('level1', function(stage) {
+        Q.stageTMX('level.tmx', stage);
+        var mario = stage.insert(new Q.Mario());
+        var goomba = stage.insert(new Q.Goomba());
+
+        stage.add("viewport").follow(mario, { x: true, y: true }, { minX: -100, maxX: 256 * 16, minY: 125, maxY: 32 * 16 });
+    });
+
+
+    Q.loadTMX('level.tmx, mario_small.png, mario_small.json, goomba.png, goomba.json', function() {
         Q.compileSheets('mario_small.png', 'mario_small.json');
+        Q.compileSheets('goomba.png', 'goomba.json');
         Q.stageScene('level1');
     });
 });
