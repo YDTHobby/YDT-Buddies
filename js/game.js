@@ -20,6 +20,15 @@ window.addEventListener('load', function() {
                 y: 380
             });
             this.add('2d, platformerControls');
+        },
+
+        step: function(dt) {
+            if(this.p.y > 650){ // Si Mario cae por debajo del escenario, vuelve al principio 
+                this.p.vy = 0;
+                this.p.x = 150;
+                this.p.y = 380;
+            }
+
         }
     });
 
@@ -28,6 +37,11 @@ window.addEventListener('load', function() {
 
         var mario = stage.insert(new Q.Mario());
         stage.add("viewport").follow(mario);
+        stage.viewport.offsetY = 160;
+
+
+
+        
     });
 
     Q.loadTMX('level.tmx, mario_small.png, mario_small.json', function() {
