@@ -12,13 +12,26 @@ window.addEventListener('load', function() {
         // And turn on default input controls and touch input (for UI)
         .controls().touch();
 
+    Q.Sprite.extend("Mario", {
+        init: function(p) {
+            this._super(p, {
+                sheet: 'marioR',
+                x: 150,
+                y: 380
+            });
+            this.add('2d, platformerControls');
+        }
+    });
+
     Q.scene('level1', function(stage) {
         Q.stageTMX('level.tmx', stage);
-        stage.add("viewport");
-        stage.viewport.offsetX = 150;
-        stage.viewport.offsetY = 380;
+
+        var mario = stage.insert(new Q.Mario());
+        stage.add("viewport").follow(mario);
     });
-    Q.loadTMX('level.tmx', function() {
+
+    Q.loadTMX('level.tmx, mario_small.png, mario_small.json', function() {
+        Q.compileSheets('mario_small.png', 'mario_small.json');
         Q.stageScene('level1');
     });
 });
