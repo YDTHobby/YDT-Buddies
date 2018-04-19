@@ -20,13 +20,18 @@ window.addEventListener('load', function() {
                 y: 380
             });
             this.add('2d, platformerControls');
+            this.on("die", this);
         },
 
         step: function(dt) {
             if (this.p.y > 580) { // Si Mario cae por debajo del escenario, vuelve al principio 
-                this.p.x = 150;
-                this.p.y = 380;
+                this.die();
             }
+        },
+
+        die: function() {
+            this.p.x = 150;
+            this.p.y = 380;
         }
 
     });
@@ -35,7 +40,7 @@ window.addEventListener('load', function() {
         init: function(p) {
             this._super(p, {
                 sheet: 'goomba',
-                x: 150,
+                x: 1660,
                 y: 500,
                 vx: 100
             });
@@ -50,7 +55,7 @@ window.addEventListener('load', function() {
 
             this.on("bump.left,bump.right,bump.bottom", function(collision) { // Si toca a Mario desde cualquier otro lado, lo mata
                 if (collision.obj.isA("Mario")) {
-                    collision.obj.destroy();
+                    collision.obj.die();
                 }
             });
         },
@@ -61,11 +66,38 @@ window.addEventListener('load', function() {
             }
         }
     });
+    Q.Sprite.extend("Bloopa", {
+        init: function(p) {
+            this._super(p, {
+                sheet: 'bloopa',
+                x: 1200,
+                y: 400,
+                vy: 100
+            });
+            this.add('2d');
 
+            this.on("bump.top", function(collision) { // Si Mario le pisa, muere
+                if (collision.obj.isA("Mario")) {
+                    this.destroy();
+                    collision.obj.p.vy = -300;
+                }
+            });
+
+            this.on("bump.left,bump.right,bump.bottom", function(collision) { // Si toca a Mario desde cualquier otro lado, lo mata
+                if (collision.obj.isA("Mario")) {
+                    collision.obj.die();
+                } else {
+                    this.p.vy = -170;
+                    this.p.gravityY = 150;
+                }
+            });
+        }
+    })
     Q.scene('level1', function(stage) {
         Q.stageTMX('level.tmx', stage);
         var mario = stage.insert(new Q.Mario());
         var goomba = stage.insert(new Q.Goomba());
+        var bloopa = stage.insert(new Q.Bloopa());
 
         stage.add("viewport").follow(mario, {
             x: true,
@@ -76,9 +108,10 @@ window.addEventListener('load', function() {
         });
     });
 
-    Q.loadTMX('level.tmx, mario_small.png, mario_small.json, goomba.png, goomba.json', function() {
+    Q.loadTMX('level.tmx, mario_small.png, mario_small.json, goomba.png, goomba.json, bloopa.png, bloopa.json', function() {
         Q.compileSheets('mario_small.png', 'mario_small.json');
         Q.compileSheets('goomba.png', 'goomba.json');
+        Q.compileSheets('bloopa.png', 'bloopa.json');
         Q.stageScene('level1');
     });
 });
