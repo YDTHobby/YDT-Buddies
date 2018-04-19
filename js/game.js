@@ -12,7 +12,9 @@ window.addEventListener('load', function() {
         // And turn on default input controls and touch input (for UI)
         .controls().touch();
 
-    Q.Sprite.extend('Mario', {
+
+/* -------------- MARIO ---------------------------- */
+    Q.Sprite.extend("Mario", {
         init: function(p) {
             this._super(p, {
                 sheet: 'marioR',
@@ -21,6 +23,7 @@ window.addEventListener('load', function() {
             });
             this.add('2d, platformerControls');
             this.on("die", this);
+            this.on("win", this);
         },
 
         step: function(dt) {
@@ -30,13 +33,20 @@ window.addEventListener('load', function() {
         },
 
         die: function() {
-            Q.stageScene('endGame', 1, { label: 'Game Over' });
+            Q.stageScene("endGame",1, { label: "Game Over" });
+            this.destroy();
+        },
+
+        win: function() {
+            Q.stageScene("endGame",1, { label: "You Win" });
             this.destroy();
         }
 
     });
 
-    Q.Sprite.extend('Goomba', { // WIP colocarlo en un lugar apropiado del escenario
+
+/* -------------- ENEMIES ---------------------------- */
+    Q.Sprite.extend("Goomba", {
         init: function(p) {
             this._super(p, {
                 sheet: 'goomba',
@@ -46,15 +56,15 @@ window.addEventListener('load', function() {
             });
             this.add('2d, aiBounce');
 
-            this.on('bump.top', function(collision) { // Si Mario le pisa, muere
+            this.on("bump.top", function(collision) { // Si Mario le pisa, muere
                 if (collision.obj.isA("Mario")) {
                     this.destroy();
                     collision.obj.p.vy = -300;
                 }
             });
 
-            this.on('bump.left,bump.right,bump.bottom', function(collision) { // Si toca a Mario desde cualquier otro lado, lo mata
-                if (collision.obj.isA('Mario')) {
+            this.on("bump.left,bump.right,bump.bottom", function(collision) { // Si toca a Mario desde cualquier otro lado, lo mata
+                if (collision.obj.isA("Mario")) {
                     collision.obj.die();
                 }
             });
@@ -66,77 +76,71 @@ window.addEventListener('load', function() {
             }
         }
     });
-    Q.Sprite.extend('Bloopa', {
+
+    Q.Sprite.extend("Bloopa", {
         init: function(p) {
             this._super(p, {
                 sheet: 'bloopa',
-                x: 1200,
-                y: 400,
-                vy: 100
+                x: 1190,
+                y: 500
             });
             this.add('2d');
 
-            this.on('bump.top', function(collision) { // Si Mario le pisa, muere
+            this.on("bump.top", function(collision) { // Si Mario le pisa, muere
                 if (collision.obj.isA("Mario")) {
                     this.destroy();
                     collision.obj.p.vy = -300;
                 }
             });
 
-            this.on('bump.left,bump.right,bump.bottom', function(collision) { // Si toca a Mario desde cualquier otro lado, lo mata
+            this.on("bump.left,bump.right,bump.bottom", function(collision) { // Si toca a Mario desde cualquier otro lado, lo mata
                 if (collision.obj.isA("Mario")) {
                     collision.obj.die();
-                } else {
-                    this.p.vy = -170;
-                    this.p.gravityY = 150;
+                }
+                else{
+                    this.p.vy = -120;
+                    this.p.gravityY = 120;
                 }
             });
+        },
+
+        step: function(dt) {
+            if (this.p.y > 580) { // Si el goomba cae por debajo del escenario, muere
+                this.destroy();
+            }
         }
-    })
-
-    Q.scene('endGame', function(stage) {
-        var container = stage.insert(new Q.UI.Container({
-            x: Q.width / 2,
-            y: Q.height / 2,
-            fill: 'rgba(0,0,0,0.5)'
-        }));
-
-        var button = container.insert(new Q.UI.Button({
-            x: 10,
-            y: 10,
-            fill: '#CCCCCC',
-            label: 'Play Again'
-        }));
-        var label = container.insert(new Q.UI.Text({
-            x: 10,
-            y: -10 - button.p.h,
-            label: stage.options.label
-        }));
-        button.on('click', function() {
-            Q.clearStages();
-            Q.stageScene('level1');
-        });
-
-        container.fit(20);
     });
 
-    Q.Sprite.extend('Princess', {
+
+
+/* -------------- PRINCESS ---------------------------- */
+
+    Q.Sprite.extend("Princess", {
         init: function(p) {
             this._super(p, {
                 asset: 'princess.png',
-                x: 1900,
+                x: 2000,
                 y: 400,
+                vy: 300
             });
             this.add('2d');
+
+
+            this.on("bump.left, bump.right, bump.top, bump.bottom", function(collision) { // Si toca a Mario desde cualquier otro lado, lo mata
+                if (collision.obj.isA("Mario")) {
+                    collision.obj.win();
+                }
+            });
         }
+
     });
+
     Q.scene('level1', function(stage) {
         Q.stageTMX('level.tmx', stage);
         var mario = stage.insert(new Q.Mario());
         var goomba = stage.insert(new Q.Goomba());
         var bloopa = stage.insert(new Q.Bloopa());
         var princess = stage.insert(new Q.Princess());
-
 
         stage.add("viewport").follow(mario, {
             x: true,
@@ -145,7 +149,27 @@ window.addEventListener('load', function() {
             minY: 120,
             maxY: 500
         });
+
     });
+
+    Q.scene('endGame',function(stage) {
+      var container = stage.insert(new Q.UI.Container({
+        x: Q.width/2, y: Q.height/2, fill: "rgba(0,0,0,0.5)"
+      }));
+
+      var button = container.insert(new Q.UI.Button({ x: 10, y: 10, fill: "#CCCCCC",
+                                                      label: "Play Again" }))         
+      var label = container.insert(new Q.UI.Text({x:10, y: -10 - button.p.h, 
+                                                       label: stage.options.label }));
+
+      button.on("click",function() {
+        Q.clearStages();
+        Q.stageScene('level1');
+      });
+
+      container.fit(20);
+    });
+
 
     Q.loadTMX('level.tmx, mario_small.png, mario_small.json, goomba.png, goomba.json, bloopa.png, bloopa.json, princess.png', function() {
         Q.compileSheets('mario_small.png', 'mario_small.json');
