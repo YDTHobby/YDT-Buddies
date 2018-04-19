@@ -119,11 +119,24 @@ window.addEventListener('load', function() {
 
         container.fit(20);
     });
+
+    Q.Sprite.extend('Princess', {
+        init: function(p) {
+            this._super(p, {
+                asset: 'princess.png',
+                x: 1900,
+                y: 400,
+            });
+            this.add('2d');
+        }
+    });
     Q.scene('level1', function(stage) {
         Q.stageTMX('level.tmx', stage);
         var mario = stage.insert(new Q.Mario());
         var goomba = stage.insert(new Q.Goomba());
         var bloopa = stage.insert(new Q.Bloopa());
+        var princess = stage.insert(new Q.Princess());
+
 
         stage.add("viewport").follow(mario, {
             x: true,
@@ -134,7 +147,7 @@ window.addEventListener('load', function() {
         });
     });
 
-    Q.loadTMX('level.tmx, mario_small.png, mario_small.json, goomba.png, goomba.json, bloopa.png, bloopa.json', function() {
+    Q.loadTMX('level.tmx, mario_small.png, mario_small.json, goomba.png, goomba.json, bloopa.png, bloopa.json, princess.png', function() {
         Q.compileSheets('mario_small.png', 'mario_small.json');
         Q.compileSheets('goomba.png', 'goomba.json');
         Q.compileSheets('bloopa.png', 'bloopa.json');
