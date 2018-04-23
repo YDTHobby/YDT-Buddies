@@ -1,138 +1,354 @@
 window.addEventListener('load', function() {
-    // Set up an instance of the Quintus engine and include
-    // the Sprites, Scenes, Input and 2D module. The 2D module
-    // includes the `TileLayer` class as well as the `2d` componet.
+    var fin_escenario = 580;
+    /**
+     * Variable principal del Quintus.
+     */
     var Q = Quintus()
+        /**
+         * Se añaden los módulos necesarios para el funcionamiento de
+         * la aplicación.
+         */
         .include('Sprites, Scenes, Input, 2D, Anim, Touch, UI, TMX')
-        // Maximize this game to whatever the size of the browser is
+        /**
+         * Se ajusta la ventana.
+         */
         .setup({
             width: 320,
             height: 480
         })
-        // And turn on default input controls and touch input (for UI)
+        /**
+         * Se le añade funcionalidad.
+         */
         .controls().touch();
 
-
-/* -------------- MARIO ---------------------------- */
-    Q.Sprite.extend("Mario", {
+    /*--------------------------------------------MARIO BROS------------------------------------------*/
+    Q.animations('mario animation', {
+        'marioR': { frames: [1, 2, 3], rate: 1 / 10 },
+        'marioL': { frames: [15, 16, 17], rate: 1 / 10 },
+        'stand_right': { frames: [0], rate: 1 / 10, loop: false },
+        'stand_left': { frames: [14], rate: 1 / 10, loop: false },
+        'jumping_right': { frames: [4], rate: 1 / 10, loop: false },
+        'jumping_left': { frames: [18], rate: 1 / 10, loop: false },
+        'mario_die': { frames: [12], rate: 1 / 10, loop: false }
+    });
+    /**
+     * Clase que representa a Mario Bros.
+     */
+    Q.Sprite.extend('Mario', {
+        /** 
+         * Inicialización de la clase.
+         */
         init: function(p) {
             this._super(p, {
-                sheet: 'marioR',
+                sprite: 'mario animation',
+                /**
+                 * Sprite de Mario.
+                 */
+                sheet: 'mario',
+                /**
+                 * Posición inicial de Mario.
+                 */
                 x: 150,
-                y: 380
+                y: 380,
+                /**
+                 * Parámetros de velocidad de Mario.
+                 */
+                jumpSpeed: -400,
+                speed: 200,
+                vy: 10
             });
+            /**
+             * Los módulos Quintus necesarios.
+             */
             this.add('2d, platformerControls');
-            this.on("die", this);
-            this.on("win", this);
+            /**
+             * Definición de las funciones adicionales.
+             */
+            this.on('die');
+            this.on('win');
         },
-
-        step: function(dt) {
-            if (this.p.y > 580) { // Si Mario cae por debajo del escenario, vuelve al principio 
-                this.die();
-            }
-        },
-
+        /**
+         * Mario muere.
+         */
         die: function() {
-            Q.stageScene("endGame",1, { label: "Game Over" });
+            this.destroy();
+            /**
+             * Se carga la pantalla de Game Over.
+             */
+            Q.stageScene('endGame', 1, { label: 'Game Over' });
+
+        },
+        /**
+         * Mario gana.
+         */
+        win: function() {
+            Q.stageScene('endGame', 1, { label: 'You Win' });
             this.destroy();
         },
-
-        win: function() {
-            Q.stageScene("endGame",1, { label: "You Win" });
-            this.destroy();
+        /**
+         * Ejecuta un paso de Mario.
+         */
+        step: function(dt) {
+            /**
+             * En caso de caerse del escenario, Mario muere.
+             */
+            if (this.p.y > fin_escenario) {
+                this.trigger('die');
+            }
         }
-
     });
 
-
-/* -------------- ENEMIES ---------------------------- */
-    Q.Sprite.extend("Goomba", {
+    /*--------------------------------------------GOOMBA------------------------------------------*/
+    /**
+     * Clase que representa al enemigo Goomba.
+     */
+    Q.Sprite.extend('Goomba', {
         init: function(p) {
             this._super(p, {
+                /**
+                 * Sprite del Goomba.
+                 */
                 sheet: 'goomba',
+                /**
+                 * Posición inicial del Goomba.
+                 */
                 x: 1660,
                 y: 500,
+                /**
+                 * Parámetros de velocidad del Goomba.
+                 */
+                speed: 170,
                 vx: 100
             });
+            /**
+             * Los módulos Quintus necesarios.
+             */
             this.add('2d, aiBounce');
-
-            this.on("bump.top", function(collision) { // Si Mario le pisa, muere
-                if (collision.obj.isA("Mario")) {
-                    this.destroy();
-                    collision.obj.p.vy = -300;
-                }
-            });
-
-            this.on("bump.left,bump.right,bump.bottom", function(collision) { // Si toca a Mario desde cualquier otro lado, lo mata
-                if (collision.obj.isA("Mario")) {
-                    collision.obj.die();
-                }
-            });
+            /**
+             * Definición de las funciones adicionales.
+             */
+            this.on('bump.top', 'top');
+            this.on('bump.left, bump.right, bump.bottom', 'collision');
+            this.on('die');
         },
-
+        /**
+         * Muere el Goomba.
+         */
+        die: function() {
+            this.destroy();
+        },
+        /**
+         * En caso de que Mario salte encima de él, el Goomba muere.
+         */
+        top: function(collision) {
+            if (collision.obj.isA('Mario')) {
+                this.trigger('die');
+                collision.obj.p.vy = -300;
+            }
+        },
+        /**
+         * En caso de que Mario choque contra él, Mario muere.
+         */
+        collision: function(collision) {
+            if (collision.obj.isA('Mario')) {
+                collision.obj.trigger('die');
+            }
+        },
+        /**
+         * Ejecuta un paso de Goomba.
+         */
         step: function(dt) {
-            if (this.p.y > 580) { // Si el goomba cae por debajo del escenario, muere
-                this.destroy();
+            /**
+             * En caso de caerse del escenario, Goomba muere.
+             */
+            if (this.p.y > fin_escenario) {
+                this.trigger('die');
             }
         }
     });
 
-    Q.Sprite.extend("Bloopa", {
+    /*--------------------------------------------BLOOPA------------------------------------------*/
+    /**
+     * Clase que representa al enemigo Bloopa.
+     */
+    Q.Sprite.extend('Bloopa', {
         init: function(p) {
             this._super(p, {
+                /**
+                 * Sprite del Bloopa.
+                 */
                 sheet: 'bloopa',
+                /**
+                 * Posición inicial del Bloopa.
+                 */
                 x: 1190,
-                y: 500
+                y: 500,
+                /**
+                 * Parámetros de velocidad del Bloopa.
+                 */
+                gravity: 0,
+                /**
+                 * Atributos adicionales.
+                 */
+                time_jump: 0
             });
+            /**
+             * Los módulos Quintus necesarios.
+             */
             this.add('2d');
-
-            this.on("bump.top", function(collision) { // Si Mario le pisa, muere
-                if (collision.obj.isA("Mario")) {
-                    this.destroy();
-                    collision.obj.p.vy = -300;
-                }
-            });
-
-            this.on("bump.left,bump.right,bump.bottom", function(collision) { // Si toca a Mario desde cualquier otro lado, lo mata
-                if (collision.obj.isA("Mario")) {
-                    collision.obj.die();
-                }
-                else{
-                    this.p.vy = -120;
-                    this.p.gravityY = 120;
-                }
-            });
+            /**
+             * Definición de las funciones adicionales.
+             */
+            this.on('bump.top', 'top');
+            this.on('bump.left, bump.right, bump.bottom', 'collision');
+            this.on('die');
+        },
+        /**
+         * Muere el Bloopa.
+         */
+        die: function() {
+            this.destroy();
+        },
+        /**
+         * En caso de que Mario salte encima de él, el Bloopa muere.
+         */
+        top: function(collision) {
+            if (collision.obj.isA('Mario')) {
+                this.trigger('die');
+                collision.obj.p.vy = -300;
+            }
+        },
+        /**
+         * En caso de que Mario choque contra él, Mario muere.
+         */
+        collision: function(collision) {
+            if (collision.obj.isA('Mario')) {
+                collision.obj.trigger('die');
+            }
         },
 
         step: function(dt) {
-            if (this.p.y > 580) { // Si el goomba cae por debajo del escenario, muere
-                this.destroy();
+            this.p.time_jump += dt;
+            /**
+             * Si toca está en el suelo, salta.
+             */
+            if (this.p.vy == 0) {
+                this.p.vy = -70;
+                this.p.time_jump = 0;
+            }
+            /**
+             * Indicamos el tiempo al que baja el Boolpa.
+             */
+            if (this.p.time_jump >= 1.5) {
+                this.p.vy = 70;
+            }
+            /**
+             * En caso de caerse del escenario, Bloopa muere.
+             */
+            if (this.p.y > 580) {
+                this.trigger('die');
             }
         }
     });
 
-
-
-/* -------------- PRINCESS ---------------------------- */
-
+    /*--------------------------------------------PRINCESS------------------------------------------*/
+    /**
+     * Clase que representa a la Princesa Peach.
+     */
     Q.Sprite.extend("Princess", {
         init: function(p) {
             this._super(p, {
+                /**
+                 * Imagen de Peach.
+                 */
                 asset: 'princess.png',
+                /**
+                 * Posición inicial de Peach.
+                 */
                 x: 2000,
-                y: 400,
-                vy: 300
+                y: 452,
+                /**
+                 * Activamos el sensor de Peach.
+                 */
+                sensor: true
             });
-            this.add('2d');
-
-
-            this.on("bump.left, bump.right, bump.top, bump.bottom", function(collision) { // Si toca a Mario desde cualquier otro lado, lo mata
-                if (collision.obj.isA("Mario")) {
-                    collision.obj.win();
-                }
-            });
+            /**
+             * Necesario para implementar el sensor.
+             */
+            this.on("sensor");
+        },
+        /**
+         * Sensor de la princesa Peach.
+         */
+        sensor: function() {
+            this.p.sensor = false;
+            Q('Mario').trigger('win');
         }
 
+    });
+
+    /*--------------------------------------------ENDGAME------------------------------------------*/
+    /**
+     * Escena que representa a la pantalla fin de partida.
+     */
+    Q.scene('endGame', function(stage) {
+        var container = stage.insert(new Q.UI.Container({
+            x: Q.width / 2,
+            y: Q.height / 2,
+            fill: 'rgba(0,0,0,0.5)'
+        }));
+
+        var button = container.insert(new Q.UI.Button({
+            x: 10,
+            y: 10,
+            fill: '#CCCCCC',
+            label: 'Play Again'
+        }));
+
+        button.on('click', function() {
+            Q.clearStages();
+            Q.stageScene('mainTitle');
+        });
+
+        var label = container.insert(new Q.UI.Text({
+            x: 10,
+            y: -10 - button.p.h,
+            label: stage.options.label
+        }));
+
+        container.fit(20);
+    });
+    /*--------------------------------------------MAINTITLE------------------------------------------*/
+    /**
+     * Escena que representa a la pantalla principal.
+     */
+    Q.scene('mainTitle', function(stage) {
+        var container = stage.insert(new Q.UI.Container({
+            x: Q.width / 2,
+            y: 5,
+            fill: 'rgba(0,0,0,0.0)'
+        }));
+
+        var button = container.insert(new Q.UI.Button({
+            asset: 'mainTitle.png',
+            x: 0,
+            y: (Q.height / 2) - 5
+        }));
+
+        button.on('click', function() {
+            Q.clearStages();
+            Q.stageScene('level1');
+        });
+
+        var label = container.insert(new Q.UI.Text({
+            x: 0,
+            y: 10,
+            label: 'Press Enter or click to start',
+            size: 18,
+            color: '#000000'
+        }));
+
+        container.fit(20);
     });
 
     Q.scene('level1', function(stage) {
@@ -152,29 +368,10 @@ window.addEventListener('load', function() {
 
     });
 
-    Q.scene('endGame',function(stage) {
-      var container = stage.insert(new Q.UI.Container({
-        x: Q.width/2, y: Q.height/2, fill: "rgba(0,0,0,0.5)"
-      }));
-
-      var button = container.insert(new Q.UI.Button({ x: 10, y: 10, fill: "#CCCCCC",
-                                                      label: "Play Again" }))         
-      var label = container.insert(new Q.UI.Text({x:10, y: -10 - button.p.h, 
-                                                       label: stage.options.label }));
-
-      button.on("click",function() {
-        Q.clearStages();
-        Q.stageScene('level1');
-      });
-
-      container.fit(20);
-    });
-
-
-    Q.loadTMX('level.tmx, mario_small.png, mario_small.json, goomba.png, goomba.json, bloopa.png, bloopa.json, princess.png', function() {
+    Q.loadTMX('level.tmx, mainTitle.png, mario_small.png, mario_small.json, goomba.png, goomba.json, bloopa.png, bloopa.json, princess.png', function() {
         Q.compileSheets('mario_small.png', 'mario_small.json');
         Q.compileSheets('goomba.png', 'goomba.json');
         Q.compileSheets('bloopa.png', 'bloopa.json');
-        Q.stageScene('level1');
+        Q.stageScene('mainTitle');
     });
 });
