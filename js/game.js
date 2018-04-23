@@ -23,13 +23,13 @@ window.addEventListener('load', function() {
 
     /*--------------------------------------------MARIO BROS------------------------------------------*/
     Q.animations('mario animation', {
-        'marioR': { frames: [1, 2, 3], rate: 1 / 10 },
-        'marioL': { frames: [15, 16, 17], rate: 1 / 10 },
+        'run_right': { frames: [1, 2, 3], rate: 1 / 10 },
+        'run_left': { frames: [15, 16, 17], rate: 1 / 10 },
         'stand_right': { frames: [0], rate: 1 / 10, loop: false },
         'stand_left': { frames: [14], rate: 1 / 10, loop: false },
         'jumping_right': { frames: [4], rate: 1 / 10, loop: false },
         'jumping_left': { frames: [18], rate: 1 / 10, loop: false },
-        'mario_die': { frames: [12], rate: 1 / 10, loop: false }
+        'die': { frames: [12], rate: 1 / 10, loop: false }
     });
     /**
      * Clase que representa a Mario Bros.
@@ -50,6 +50,7 @@ window.addEventListener('load', function() {
                  */
                 x: 150,
                 y: 380,
+                direction: 'right',
                 /**
                  * Parámetros de velocidad de Mario.
                  */
@@ -60,7 +61,7 @@ window.addEventListener('load', function() {
             /**
              * Los módulos Quintus necesarios.
              */
-            this.add('2d, platformerControls');
+            this.add('2d, platformerControls, animation');
             /**
              * Definición de las funciones adicionales.
              */
@@ -89,7 +90,14 @@ window.addEventListener('load', function() {
          * Ejecuta un paso de Mario.
          */
         step: function(dt) {
-            /**
+            if (this.p.vx > 0) {
+                this.play('run_right');
+            } else if (this.p.vx < 0) {
+                this.play('run_left');
+            } else {
+                this.play("stand_" + this.p.direction);
+            }
+            /*
              * En caso de caerse del escenario, Mario muere.
              */
             if (this.p.y > fin_escenario) {
