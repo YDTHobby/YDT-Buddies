@@ -76,12 +76,14 @@ window.addEventListener('load', function() {
          * Mario muere.
          */
         die: function() {
+            Q.audio.stop('music_main.mp3');
+            if (!this.p.die) {
+                Q.audio.play('music_die.mp3');
+            }
             this.p.die = true;
             this.p.vy = -500;
             this.p.speed = 0;
             this.p.jumpSpeed = 0;
-            Q.audio.stop('music_main.mp3');
-            Q.audio.play('music_die.mp3');
 
             setTimeout(function() {
                 Q('Mario').destroy();
