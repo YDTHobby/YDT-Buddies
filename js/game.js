@@ -213,7 +213,7 @@ window.addEventListener('load', function() {
 
     /*--------------------------------------------BLOOPA------------------------------------------*/
     Q.animations('bloopa animation', {
-        'live': { frames: [0, 1], rate: 1 / 3 },
+        'live': { frames: [0, 1], rate: 1 / 2 },
         'die': { frames: [2], loop: false }
     });
     /**
@@ -314,7 +314,7 @@ window.addEventListener('load', function() {
     /**
      * Clase que representa a la Princesa Peach.
      */
-    Q.Sprite.extend("Princess", {
+    Q.Sprite.extend('Princess', {
         init: function(p) {
             this._super(p, {
                 /**
@@ -334,7 +334,7 @@ window.addEventListener('load', function() {
             /**
              * Necesario para implementar el sensor.
              */
-            this.on("sensor");
+            this.on('sensor');
         },
         /**
          * Sensor de la princesa Peach.
@@ -345,6 +345,43 @@ window.addEventListener('load', function() {
         }
 
     });
+    /*--------------------------------------------COIN------------------------------------------*/
+    Q.animations('coin animation', {
+        'live': { frames: [0, 1, 2], rate: 1 / 3 }
+    });
+    /**
+     * Clase que representa a una moneda.
+     */
+    Q.Sprite.extend('Coin', {
+        init: function(p) {
+            this._super(p, {
+                sprite: 'coin animation',
+                /**
+                 * Sprite de la moneda.
+                 */
+                sheet: 'coin',
+                /**
+                 * Activamos el sensor de la moneda.
+                 */
+                sensor: true
+            });
+            this.add('animation, tween');
+
+            this.on('sensor');
+        },
+
+        sensor: function() {
+            var get = function() {
+                this.destroy()
+            }
+            this.animate({ y: this.p.y - 50 }, 0.3, { callback: get });
+        },
+
+        step: function(dt) {
+            this.play('live');
+        }
+    });
+
 
     /*--------------------------------------------ENDGAME------------------------------------------*/
     /**
@@ -409,7 +446,10 @@ window.addEventListener('load', function() {
 
         container.fit(20);
     });
-
+    /*--------------------------------------------LEVEL1------------------------------------------*/
+    /**
+     * Escena que representa el nivel 1.
+     */
     Q.scene('level1', function(stage) {
         Q.stageTMX('level.tmx', stage);
         var mario = stage.insert(new Q.Mario());
@@ -417,7 +457,11 @@ window.addEventListener('load', function() {
         var bloopa = stage.insert(new Q.Bloopa());
         var princess = stage.insert(new Q.Princess());
 
-        stage.add("viewport").follow(mario, {
+        var coin1 = stage.insert(new Q.Coin({ x: 200, y: 450 }));
+        var coin2 = stage.insert(new Q.Coin({ x: 230, y: 450 }));
+        var coin3 = stage.insert(new Q.Coin({ x: 260, y: 450 }));
+
+        stage.add('viewport').follow(mario, {
             x: true,
             y: true
         }, {
@@ -427,10 +471,11 @@ window.addEventListener('load', function() {
 
     });
 
-    Q.loadTMX('level.tmx, mainTitle.png, mario_small.png, mario_small.json, goomba.png, goomba.json, bloopa.png, bloopa.json, princess.png', function() {
+    Q.loadTMX('level.tmx, mainTitle.png, mario_small.png, mario_small.json, goomba.png, goomba.json, bloopa.png, bloopa.json, princess.png, coin.png, coin.json', function() {
         Q.compileSheets('mario_small.png', 'mario_small.json');
         Q.compileSheets('goomba.png', 'goomba.json');
         Q.compileSheets('bloopa.png', 'bloopa.json');
+        Q.compileSheets('coin.png', 'coin.json');
         Q.stageScene('mainTitle');
     });
 });
