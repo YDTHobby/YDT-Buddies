@@ -23,13 +23,13 @@ window.addEventListener('load', function() {
 
     /*--------------------------------------------MARIO BROS------------------------------------------*/
     Q.animations('mario animation', {
-        'run_right': { frames: [1, 2, 3], rate: 1 / 10 },
-        'run_left': { frames: [15, 16, 17], rate: 1 / 10 },
-        'stand_right': { frames: [0], rate: 1 / 10, loop: false },
-        'stand_left': { frames: [14], rate: 1 / 10, loop: false },
-        'jumping_right': { frames: [4], rate: 1 / 10, loop: false },
-        'jumping_left': { frames: [18], rate: 1 / 10, loop: false },
-        'die': { frames: [12], rate: 1 / 10, loop: false }
+        'run_right': { frames: [1, 2, 3], rate: 1 / 7 },
+        'run_left': { frames: [15, 16, 17], rate: 1 / 7 },
+        'stand_right': { frames: [0] },
+        'stand_left': { frames: [14] },
+        'jumping_right': { frames: [4] },
+        'jumping_left': { frames: [18] },
+        'die': { frames: [12] }
     });
     /**
      * Clase que representa a Mario Bros.
@@ -72,6 +72,7 @@ window.addEventListener('load', function() {
          * Mario muere.
          */
         die: function() {
+            this.play('die');
             this.destroy();
             /**
              * Se carga la pantalla de Game Over.
@@ -90,12 +91,14 @@ window.addEventListener('load', function() {
          * Ejecuta un paso de Mario.
          */
         step: function(dt) {
-            if (this.p.vx > 0) {
+            if (this.p.vy != 0) {
+                this.play('jumping_' + this.p.direction)
+            } else if (this.p.vx > 0) {
                 this.play('run_right');
             } else if (this.p.vx < 0) {
                 this.play('run_left');
             } else {
-                this.play("stand_" + this.p.direction);
+                this.play('stand_' + this.p.direction);
             }
             /*
              * En caso de caerse del escenario, Mario muere.
@@ -254,7 +257,7 @@ window.addEventListener('load', function() {
              * En caso de caerse del escenario, Bloopa muere.
              */
             if (this.p.y > 580) {
-                this.trigger('die');
+                //this.trigger('die');
             }
         }
     });
