@@ -3,12 +3,12 @@ window.addEventListener('load', function() {
     /**
      * Variable principal del Quintus.
      */
-    var Q = Quintus()
+    var Q = Quintus({ audioSupported: ['mp3', 'ogg'] })
         /**
          * Se añaden los módulos necesarios para el funcionamiento de
          * la aplicación.
          */
-        .include('Sprites, Scenes, Input, 2D, Anim, Touch, UI, TMX')
+        .include('Sprites, Scenes, Input, 2D, Anim, Touch, UI, TMX, Audio')
         /**
          * Se ajusta la ventana.
          */
@@ -19,7 +19,7 @@ window.addEventListener('load', function() {
         /**
          * Se le añade funcionalidad.
          */
-        .controls().touch();
+        .controls().touch().enableSound();
 
     /*--------------------------------------------MARIO BROS------------------------------------------*/
     Q.animations('mario animation', {
@@ -80,6 +80,8 @@ window.addEventListener('load', function() {
             this.p.vy = -500;
             this.p.speed = 0;
             this.p.jumpSpeed = 0;
+            Q.audio.stop('music_main.mp3');
+            Q.audio.play('music_die.mp3');
 
             setTimeout(function() {
                 Q('Mario').destroy();
@@ -93,6 +95,8 @@ window.addEventListener('load', function() {
          * Mario gana.
          */
         win: function() {
+            Q.audio.stop('music_main.mp3');
+            Q.audio.play('music_level_complete.mp3');
             Q.stageScene('endGame', 1, { label: 'You Win' });
             this.destroy();
         },
@@ -342,6 +346,7 @@ window.addEventListener('load', function() {
             if (!this.p.get) {
                 this.p.get = true;
                 Q.state.inc('coins', 1);
+                Q.audio.play('coin.mp3');
             }
         },
 
@@ -412,6 +417,9 @@ window.addEventListener('load', function() {
             color: '#000000'
         }));
         Q.state.reset({ coins: 0 });
+        Q.audio.stop('music_level_complete.mp3');
+        Q.audio.stop('music_die.mp3');
+        Q.audio.play('music_main.mp3', { loop: true });
 
         container.fit(20);
     });
@@ -500,7 +508,7 @@ window.addEventListener('load', function() {
         Q.stageScene('HUB', 1);
     });
 
-    Q.loadTMX('level.tmx, mainTitle.png, mario_small.png, mario_small.json, goomba.png, goomba.json, bloopa.png, bloopa.json, princess.png, coin.png, coin.json', function() {
+    Q.loadTMX('level.tmx, mainTitle.png, mario_small.png, mario_small.json, goomba.png, goomba.json, bloopa.png, bloopa.json, princess.png, coin.png, coin.json, music_main.mp3, music_main.ogg, music_die.mp3, music_die.ogg, music_level_complete.mp3, music_level_complete.ogg, coin.mp3, coin.ogg', function() {
         Q.compileSheets('mario_small.png', 'mario_small.json');
         Q.compileSheets('goomba.png', 'goomba.json');
         Q.compileSheets('bloopa.png', 'bloopa.json');
