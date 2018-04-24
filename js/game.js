@@ -363,7 +363,9 @@ window.addEventListener('load', function() {
                 /**
                  * Activamos el sensor de la moneda.
                  */
-                sensor: true
+                sensor: true,
+
+                get: false
             });
             this.add('animation, tween');
 
@@ -375,13 +377,16 @@ window.addEventListener('load', function() {
                 this.destroy()
             }
             this.animate({ y: this.p.y - 50 }, 0.3, { callback: get });
+            if(!this.p.get){
+                this.p.get = true;
+                Q.state.inc('coins', 1);
+            }
         },
 
         step: function(dt) {
             this.play('live');
         }
     });
-
 
     /*--------------------------------------------ENDGAME------------------------------------------*/
     /**
@@ -414,6 +419,7 @@ window.addEventListener('load', function() {
 
         container.fit(20);
     });
+
     /*--------------------------------------------MAINTITLE------------------------------------------*/
     /**
      * Escena que representa a la pantalla principal.
@@ -443,15 +449,47 @@ window.addEventListener('load', function() {
             size: 18,
             color: '#000000'
         }));
+        Q.state.reset({ coins: 0 });
 
         container.fit(20);
     });
+
+    Q.UI.Text.extend('CoinsLabel', {
+        init: function(p) {
+            this._super({
+                label: p.label,
+                x: 0,
+                y: 10,
+                size: 16
+            });
+
+            Q.state.on('change.coins', this, 'changeCoins');
+        },
+
+        changeCoins: function(coins) {
+            this.p.label = 'Coins: ' + coins;
+        }
+    });
+
+    Q.scene('HUB', function(stage) {
+        var container = stage.insert(new Q.UI.Container({
+            x: Q.width / 3,
+            y: 0,
+            fill: 'rgba(0,0,0,0.0)'
+        }));
+
+        var label = container.insert(new Q.CoinsLabel({ label: 'Coins: 0' }));
+
+        container.fit(20);
+    });
+
     /*--------------------------------------------LEVEL1------------------------------------------*/
     /**
      * Escena que representa el nivel 1.
      */
     Q.scene('level1', function(stage) {
         Q.stageTMX('level.tmx', stage);
+
         var mario = stage.insert(new Q.Mario());
         var goomba = stage.insert(new Q.Goomba());
         var bloopa = stage.insert(new Q.Bloopa());
@@ -468,7 +506,7 @@ window.addEventListener('load', function() {
             minY: 120,
             maxY: 500
         });
-
+        Q.stageScene('HUB', 1);
     });
 
     Q.loadTMX('level.tmx, mainTitle.png, mario_small.png, mario_small.json, goomba.png, goomba.json, bloopa.png, bloopa.json, princess.png, coin.png, coin.json', function() {
