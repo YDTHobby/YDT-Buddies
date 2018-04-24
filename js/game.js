@@ -25,11 +25,11 @@ window.addEventListener('load', function() {
     Q.animations('mario animation', {
         'run_right': { frames: [1, 2, 3], rate: 1 / 7 },
         'run_left': { frames: [15, 16, 17], rate: 1 / 7 },
-        'stand_right': { frames: [0] },
-        'stand_left': { frames: [14] },
-        'jumping_right': { frames: [4] },
-        'jumping_left': { frames: [18] },
-        'die': { frames: [12] }
+        'stand_right': { frames: [0], loop: false },
+        'stand_left': { frames: [14], loop: false },
+        'jumping_right': { frames: [4], loop: false },
+        'jumping_left': { frames: [18], loop: false },
+        'die': { frames: [12], loop: false }
     });
     /**
      * Clase que representa a Mario Bros.
@@ -57,7 +57,9 @@ window.addEventListener('load', function() {
                 jumpSpeed: -400,
                 speed: 200,
                 vy: 10,
-
+                /**
+                 * Atributos adicionales.
+                 */
                 die: false
             });
             /**
@@ -76,6 +78,8 @@ window.addEventListener('load', function() {
         die: function() {
             this.p.die = true;
             this.p.vy = -500;
+            this.p.speed = 0;
+            this.p.jumpSpeed = 0;
 
             setTimeout(function() {
                 Q('Mario').destroy();
@@ -119,9 +123,9 @@ window.addEventListener('load', function() {
     });
 
     /*--------------------------------------------GOOMBA------------------------------------------*/
-    Q.animations("goomba anim", {
-        "live": { frames: [0, 1], rate: 1 / 5 },
-        "die": { frames: [2] }
+    Q.animations('goomba animation', {
+        'live': { frames: [0, 1], rate: 1 / 5 },
+        'die': { frames: [2], loop: false }
     });
     /**
      * Clase que representa al enemigo Goomba.
@@ -144,7 +148,9 @@ window.addEventListener('load', function() {
                  */
                 speed: 170,
                 vx: 100,
-
+                /**
+                 * Atributos adicionales.
+                 */
                 die: false
             });
             /**
@@ -163,10 +169,12 @@ window.addEventListener('load', function() {
          */
         die: function() {
             this.p.die = true;
+            this.p.speed = 0;
+            this.p.vx = 0;
 
             setTimeout(function() {
                 Q('Goomba').destroy();
-            }, 1000);
+            }, 200);
         },
         /**
          * En caso de que Mario salte encima de él, el Goomba muere.
@@ -204,12 +212,17 @@ window.addEventListener('load', function() {
     });
 
     /*--------------------------------------------BLOOPA------------------------------------------*/
+    Q.animations('bloopa animation', {
+        'live': { frames: [0, 1], rate: 1 / 3 },
+        'die': { frames: [2], loop: false }
+    });
     /**
      * Clase que representa al enemigo Bloopa.
      */
     Q.Sprite.extend('Bloopa', {
         init: function(p) {
             this._super(p, {
+                sprite: 'bloopa animation',
                 /**
                  * Sprite del Bloopa.
                  */
@@ -226,12 +239,13 @@ window.addEventListener('load', function() {
                 /**
                  * Atributos adicionales.
                  */
-                time_jump: 0
+                time_jump: 0,
+                die: false
             });
             /**
              * Los módulos Quintus necesarios.
              */
-            this.add('2d');
+            this.add('2d, animation');
             /**
              * Definición de las funciones adicionales.
              */
@@ -243,7 +257,11 @@ window.addEventListener('load', function() {
          * Muere el Bloopa.
          */
         die: function() {
-            this.destroy();
+            this.p.die = true;
+            this.p.vy = 70;
+            setTimeout(function() {
+                Q('Bloopa').destroy();
+            }, 200);
         },
         /**
          * En caso de que Mario salte encima de él, el Bloopa muere.
@@ -264,25 +282,30 @@ window.addEventListener('load', function() {
         },
 
         step: function(dt) {
-            this.p.time_jump += dt;
-            /**
-             * Si toca está en el suelo, salta.
-             */
-            if (this.p.vy == 0) {
-                this.p.vy = -70;
-                this.p.time_jump = 0;
-            }
-            /**
-             * Indicamos el tiempo al que baja el Boolpa.
-             */
-            if (this.p.time_jump >= 1.5) {
-                this.p.vy = 70;
-            }
-            /**
-             * En caso de caerse del escenario, Bloopa muere.
-             */
-            if (this.p.y > 580) {
-                this.trigger('die');
+            if (this.p.die) {
+                this.play('die');
+            } else {
+                this.play('live');
+                this.p.time_jump += dt;
+                /**
+                 * Si toca está en el suelo, salta.
+                 */
+                if (this.p.vy == 0) {
+                    this.p.vy = -70;
+                    this.p.time_jump = 0;
+                }
+                /**
+                 * Indicamos el tiempo al que baja el Boolpa.
+                 */
+                if (this.p.time_jump >= 1.5) {
+                    this.p.vy = 70;
+                }
+                /**
+                 * En caso de caerse del escenario, Bloopa muere.
+                 */
+                if (this.p.y > 580) {
+                    this.trigger('die');
+                }
             }
         }
     });
