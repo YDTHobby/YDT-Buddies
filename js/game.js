@@ -56,7 +56,9 @@ window.addEventListener('load', function() {
                  */
                 jumpSpeed: -400,
                 speed: 200,
-                vy: 10
+                vy: 10,
+
+                die: false
             });
             /**
              * Los módulos Quintus necesarios.
@@ -72,13 +74,16 @@ window.addEventListener('load', function() {
          * Mario muere.
          */
         die: function() {
-            this.play('die');
-            this.destroy();
-            /**
-             * Se carga la pantalla de Game Over.
-             */
-            Q.stageScene('endGame', 1, { label: 'Game Over' });
+            this.p.die = true;
+            this.p.vy = -500;
 
+            setTimeout(function() {
+                Q('Mario').destroy();
+                /**
+                 * Se carga la pantalla de Game Over.
+                 */
+                Q.stageScene('endGame', 1, { label: 'Game Over' });
+            }, 1000);
         },
         /**
          * Mario gana.
@@ -91,31 +96,40 @@ window.addEventListener('load', function() {
          * Ejecuta un paso de Mario.
          */
         step: function(dt) {
-            if (this.p.vy != 0) {
-                this.play('jumping_' + this.p.direction)
-            } else if (this.p.vx > 0) {
-                this.play('run_right');
-            } else if (this.p.vx < 0) {
-                this.play('run_left');
+            if (this.p.die) {
+                this.play('die');
             } else {
-                this.play('stand_' + this.p.direction);
-            }
-            /*
-             * En caso de caerse del escenario, Mario muere.
-             */
-            if (this.p.y > fin_escenario) {
-                this.trigger('die');
+                if (this.p.vy != 0) {
+                    this.play('jumping_' + this.p.direction)
+                } else if (this.p.vx > 0) {
+                    this.play('run_right');
+                } else if (this.p.vx < 0) {
+                    this.play('run_left');
+                } else {
+                    this.play('stand_' + this.p.direction);
+                }
+                /*
+                 * En caso de caerse del escenario, Mario muere.
+                 */
+                if (this.p.y > fin_escenario) {
+                    this.trigger('die');
+                }
             }
         }
     });
 
     /*--------------------------------------------GOOMBA------------------------------------------*/
+    Q.animations("goomba anim", {
+        "live": { frames: [0, 1], rate: 1 / 5 },
+        "die": { frames: [2] }
+    });
     /**
      * Clase que representa al enemigo Goomba.
      */
     Q.Sprite.extend('Goomba', {
         init: function(p) {
             this._super(p, {
+                sprite: 'goomba animation',
                 /**
                  * Sprite del Goomba.
                  */
@@ -141,6 +155,8 @@ window.addEventListener('load', function() {
             this.on('bump.top', 'top');
             this.on('bump.left, bump.right, bump.bottom', 'collision');
             this.on('die');
+
+            this.play('live');
         },
         /**
          * Muere el Goomba.
@@ -257,7 +273,7 @@ window.addEventListener('load', function() {
              * En caso de caerse del escenario, Bloopa muere.
              */
             if (this.p.y > 580) {
-                //this.trigger('die');
+                this.trigger('die');
             }
         }
     });
