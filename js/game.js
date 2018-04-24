@@ -143,26 +143,30 @@ window.addEventListener('load', function() {
                  * Parámetros de velocidad del Goomba.
                  */
                 speed: 170,
-                vx: 100
+                vx: 100,
+
+                die: false
             });
             /**
              * Los módulos Quintus necesarios.
              */
-            this.add('2d, aiBounce');
+            this.add('2d, aiBounce, animation');
             /**
              * Definición de las funciones adicionales.
              */
             this.on('bump.top', 'top');
             this.on('bump.left, bump.right, bump.bottom', 'collision');
             this.on('die');
-
-            this.play('live');
         },
         /**
          * Muere el Goomba.
          */
         die: function() {
-            this.destroy();
+            this.p.die = true;
+
+            setTimeout(function() {
+                Q('Goomba').destroy();
+            }, 1000);
         },
         /**
          * En caso de que Mario salte encima de él, el Goomba muere.
@@ -185,11 +189,16 @@ window.addEventListener('load', function() {
          * Ejecuta un paso de Goomba.
          */
         step: function(dt) {
-            /**
-             * En caso de caerse del escenario, Goomba muere.
-             */
-            if (this.p.y > fin_escenario) {
-                this.trigger('die');
+            if (this.p.die) {
+                this.play('die');
+            } else {
+                this.play('live');
+                /**
+                 * En caso de caerse del escenario, Goomba muere.
+                 */
+                if (this.p.y > fin_escenario) {
+                    this.trigger('die');
+                }
             }
         }
     });
