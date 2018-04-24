@@ -156,12 +156,10 @@ window.addEventListener('load', function() {
             /**
              * Los módulos Quintus necesarios.
              */
-            this.add('2d, aiBounce, animation');
+            this.add('aiBounce, defaultEnemy');
             /**
              * Definición de las funciones adicionales.
              */
-            this.on('bump.top', 'top');
-            this.on('bump.left, bump.right, bump.bottom', 'collision');
             this.on('die');
         },
         /**
@@ -175,23 +173,6 @@ window.addEventListener('load', function() {
             setTimeout(function() {
                 Q('Goomba').destroy();
             }, 200);
-        },
-        /**
-         * En caso de que Mario salte encima de él, el Goomba muere.
-         */
-        top: function(collision) {
-            if (collision.obj.isA('Mario')) {
-                this.trigger('die');
-                collision.obj.p.vy = -300;
-            }
-        },
-        /**
-         * En caso de que Mario choque contra él, Mario muere.
-         */
-        collision: function(collision) {
-            if (collision.obj.isA('Mario')) {
-                collision.obj.trigger('die');
-            }
         },
         /**
          * Ejecuta un paso de Goomba.
@@ -245,12 +226,10 @@ window.addEventListener('load', function() {
             /**
              * Los módulos Quintus necesarios.
              */
-            this.add('2d, animation');
+            this.add('defaultEnemy');
             /**
              * Definición de las funciones adicionales.
              */
-            this.on('bump.top', 'top');
-            this.on('bump.left, bump.right, bump.bottom', 'collision');
             this.on('die');
         },
         /**
@@ -262,23 +241,6 @@ window.addEventListener('load', function() {
             setTimeout(function() {
                 Q('Bloopa').destroy();
             }, 200);
-        },
-        /**
-         * En caso de que Mario salte encima de él, el Bloopa muere.
-         */
-        top: function(collision) {
-            if (collision.obj.isA('Mario')) {
-                this.trigger('die');
-                collision.obj.p.vy = -300;
-            }
-        },
-        /**
-         * En caso de que Mario choque contra él, Mario muere.
-         */
-        collision: function(collision) {
-            if (collision.obj.isA('Mario')) {
-                collision.obj.trigger('die');
-            }
         },
 
         step: function(dt) {
@@ -377,7 +339,7 @@ window.addEventListener('load', function() {
                 this.destroy()
             }
             this.animate({ y: this.p.y - 50 }, 0.3, { callback: get });
-            if(!this.p.get){
+            if (!this.p.get) {
                 this.p.get = true;
                 Q.state.inc('coins', 1);
             }
@@ -481,6 +443,35 @@ window.addEventListener('load', function() {
         var label = container.insert(new Q.CoinsLabel({ label: 'Coins: 0' }));
 
         container.fit(20);
+    });
+
+    Q.component('defaultEnemy', {
+        added: function() {
+            this.entity.add('2d, animation');
+
+            /**
+             * Definición de las funciones adicionales.
+             */
+            this.entity.on('bump.top', this, 'top');
+            this.entity.on('bump.left, bump.right, bump.bottom', this, 'collision');
+        },
+        /**
+         * En caso de que Mario salte encima de él, el Bloopa muere.
+         */
+        top: function(collision) {
+            if (collision.obj.isA('Mario')) {
+                this.entity.trigger('die');
+                collision.obj.p.vy = -300;
+            }
+        },
+        /**
+         * En caso de que Mario choque contra él, Mario muere.
+         */
+        collision: function(collision) {
+            if (collision.obj.isA('Mario')) {
+                collision.obj.trigger('die');
+            }
+        }
     });
 
     /*--------------------------------------------LEVEL1------------------------------------------*/
