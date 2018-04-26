@@ -100,10 +100,8 @@ function loadMario(Q) {
                 if (this.p.move) {
                     if (this.p.vy != 0) {
                         this.play('jumping_' + this.p.direction)
-                    } else if (this.p.vx > 0) {
-                        this.play('run_right');
-                    } else if (this.p.vx < 0) {
-                        this.play('run_left');
+                    } else if (this.p.vx != 0) {
+                        this.play('run_' + this.p.direction );
                     } else {
                         this.play('stand_' + this.p.direction);
                     }
