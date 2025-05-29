@@ -321,14 +321,14 @@
     }, 1000);
   };
 
-  function simulateKey(key, isDown) {
-    if (!gameWindow) return;
-    const event = new KeyboardEvent(isDown ? 'keydown' : 'keyup', {
-      key,
-      bubbles: true
-    });
-    gameWindow.document.dispatchEvent(event);
-  }
+function simulateKey(key, isDown) {
+  if (!gameWindow) return;
+  const event = new KeyboardEvent(isDown ? 'keydown' : 'keyup', {
+    key,
+    bubbles: true
+  });
+  gameWindow.dispatchEvent(event); // ✅ Send to iframe's window, not document
+}
 
   function setupJoystick() {
     const joystickEl = document.getElementById('joystick');
