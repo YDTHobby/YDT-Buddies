@@ -1,7 +1,7 @@
-function loadMario(Q) {
-    /*--------------------------------------------MARIO BROS------------------------------------------*/
+function loadNugget(Q) {
+    /*--------------------------------------------Super YDT Buddies------------------------------------------*/
 
-    Q.animations('mario animation', {
+    Q.animations('nugget animation', {
         'run_right': { frames: [1, 2, 3], rate: 1 / 7 },
         'run_left': { frames: [15, 16, 17], rate: 1 / 7 },
         'stand_right': { frames: [0], loop: false },
@@ -11,49 +11,49 @@ function loadMario(Q) {
         'die': { frames: [12], loop: false }
     });
     /**
-     * Clase que representa a Mario Bros.
+     * Class representing Nugget.
      */
-    Q.Sprite.extend('Mario', {
+    Q.Sprite.extend('nugget', {
         /** 
-         * Inicialización de la clase.
+         * Class initialization.
          */
         init: function(p) {
             this._super(p, {
-                sprite: 'mario animation',
+                sprite: 'nugget animation',
                 /**
-                 * Sprite de Mario.
+                 * Nugget Sprite.
                  */
-                sheet: 'mario',
+                sheet: 'nugget',
                 /**
-                 * Posición inicial de Mario.
+                 * Nugget starting position.
                  */
                 x: 150,
                 y: 380,
                 direction: 'right',
                 /**
-                 * Parámetros de velocidad de Mario.
+                 * Nugget velocity parameters.
                  */
                 jumpSpeed: -400,
                 speed: 200,
                 vy: 10,
                 /**
-                 * Atributos adicionales.
+                 * Additional attributes.
                  */
                 die: false,
                 move: true
             });
             /**
-             * Los módulos Quintus necesarios.
+             * The necessary Quintus modules.
              */
             this.add('2d, platformerControls, animation, tween');
             /**
-             * Definición de las funciones adicionales.
+             * Definition of additional functions.
              */
             this.on('die');
             this.on('win');
         },
         /**
-         * Mario muere.
+         * nugget dies.
          */
         die: function() {
             Q.audio.stop('music_main.mp3');
@@ -68,13 +68,13 @@ function loadMario(Q) {
                 this.destroy();
                 Q.stageScene('endGame', 1, { label: 'Game Over' });
             }
-            var marioDie = function() {
+            var nuggetDie = function() {
                 this.animate({ x: this.p.x, y: fondo_escenario, angle: 0 }, 0.5, { callback: lose });
             }
-            this.animate({ y: this.p.y - 100, angle: 0 }, 0.3, { callback: marioDie });
+            this.animate({ y: this.p.y - 100, angle: 0 }, 0.3, { callback: nuggetDie });
         },
         /**
-         * Mario gana.
+         * nugget wins.
          */
         win: function() {
             this.p.move = false;
@@ -83,11 +83,11 @@ function loadMario(Q) {
             Q.stageScene('endGame', 1, { label: 'You Win' });
         },
         /**
-         * Ejecuta un paso de Mario.
+         * Execute a nugget step.
          */
         step: function(dt) {
             /**
-             * En caso de que muera Mario.
+             * In case nugget dies.
              */
             if (this.p.die) {
                 this.play('die');
@@ -95,7 +95,7 @@ function loadMario(Q) {
                 this.p.jumpSpeed = 0;
             } else {
                 /**
-                 * Movimiento normal.
+                 * Normal movement.
                  */
                 if (this.p.move) {
                     if (this.p.vy != 0) {
@@ -106,14 +106,14 @@ function loadMario(Q) {
                         this.play('stand_' + this.p.direction);
                     }
                     /*
-                     * En caso de caerse del escenario, Mario muere.
+                     * If he falls off the stage, Nugget dies.
                      */
                     if (this.p.y > fondo_escenario) {
                         this.trigger('die');
                     }
                 }
                 /**
-                 * Haya ganado la partida.
+                 * He has won the game.
                  */
                 else {
                     this.play('stand_right');
