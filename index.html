@@ -6,7 +6,7 @@
     <!-- Game Styles -->
     <link rel="stylesheet" type="text/css" href="css/style.css">
 
-    <!-- Wrapper Styles -->
+    <!-- Wrapper & Screen Styles -->
     <style>
         * {
             margin: 0;
@@ -83,6 +83,20 @@
             display: flex;
             justify-content: center;
             align-items: center;
+        }
+        /* Ensure game canvas fits inside screenContainer */
+        #gameContainer {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        #screenContainer canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
         }
         #screenContainer::before {
             content: '';
@@ -297,16 +311,13 @@
             setupButton('pauseBtn','Escape');
         }
         window.addEventListener('load', () => {
-            // Allow game to initialize
             setTimeout(setupControls, 1000);
         });
         setInterval(() => {
-            try {
-                if (window.Q && Q.state) {
-                    const coins = Q.state.get('coins') || 0;
-                    document.getElementById('hudDisplay').textContent = `COINS: ${coins}`;
-                }
-            } catch {};
+            if (window.Q && Q.state) {
+                const coins = Q.state.get('coins') || 0;
+                document.getElementById('hudDisplay').textContent = `COINS: ${coins}`;
+            }
         }, 100);
     </script>
 </body>
