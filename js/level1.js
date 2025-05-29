@@ -1,20 +1,20 @@
 function loadLevel1(Q) {
     /**
-     * Escena que representa el nivel 1.
+     * Scene representing level 1.
      */
     Q.scene('level1', function(stage) {
         Q.stageTMX('level.tmx', stage);
 
-        var mario = stage.insert(new Q.Mario());
-        var goomba = stage.insert(new Q.Goomba());
-        var bloopa = stage.insert(new Q.Bloopa());
-        var princess = stage.insert(new Q.Princess());
+        var nugget = stage.insert(new Q.nugget());
+        var tangledyarn = stage.insert(new Q.tangledyarn());
+        var cat = stage.insert(new Q.cat());
+        var princess = stage.insert(new Q.princess());
 
-        var coin1 = stage.insert(new Q.Coin({ x: 200, y: 450 }));
-        var coin2 = stage.insert(new Q.Coin({ x: 230, y: 450 }));
-        var coin3 = stage.insert(new Q.Coin({ x: 260, y: 450 }));
+        var yarnball1 = stage.insert(new Q.yarnball({ x: 200, y: 450 }));
+        var yarnball2 = stage.insert(new Q.yarnball({ x: 230, y: 450 }));
+        var yarnball3 = stage.insert(new Q.yarnball({ x: 260, y: 450 }));
 
-        stage.add('viewport').follow(mario, {
+        stage.add('viewport').follow(nugget, {
             x: true,
             y: true
         }, {
