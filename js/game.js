@@ -1,409 +1,55 @@
-<!DOCTYPE HTML>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>YDT Barnyard Buddies - Arcade Machine</title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            image-rendering: pixelated;
-            image-rendering: -moz-crisp-edges;
-            image-rendering: crisp-edges;
-        }
-        
-        body {
-            background: #1a1a1a;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            font-family: 'Courier New', monospace;
-            overflow: hidden;
-        }
-        
-        /* Arcade Machine - Adjusted for 320x480 aspect ratio */
-        #arcadeMachine {
-            position: relative;
-            width: 500px;
-            height: 900px;
-            background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
-            border-radius: 20px 20px 10px 10px;
-            box-shadow: 
-                0 0 50px rgba(0,0,0,0.8),
-                inset 0 0 20px rgba(255,255,255,0.1);
-            padding: 20px;
-            padding-top: 40px;
-            transform: perspective(1000px) rotateX(2deg);
-        }
-        
-        /* Marquee */
-        #marquee {
-            position: absolute;
-            top: -80px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 400px;
-            height: 80px;
-            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
-            border-radius: 10px 10px 0 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 
-                0 0 30px rgba(139,69,19,0.5),
-                inset 0 0 20px rgba(255,255,255,0.3);
-        }
-        
-        #marquee h1 {
-            color: #FFF;
-            font-size: 24px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            font-weight: bold;
-            letter-spacing: 2px;
-        }
-        
-        /* Screen */
-        #screenBezel {
-            position: relative;
-            width: 100%;
-            height: 550px;
-            background: #000;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 
-                inset 0 0 30px rgba(0,0,0,0.8),
-                0 0 10px rgba(255,255,255,0.1);
-        }
-        
-        #screenContainer {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            background: #111;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: inset 0 0 40px rgba(0,0,0,0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        /* CRT Effect */
-        #screenContainer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: repeating-linear-gradient(
-                0deg,
-                rgba(0,0,0,0.15) 0px,
-                transparent 1px,
-                transparent 2px,
-                rgba(0,0,0,0.15) 3px
-            );
-            pointer-events: none;
-            z-index: 1000;
-        }
-        
-        /* Game Frame */
-        #gameFrame {
-            width: 320px;
-            height: 480px;
-            border: none;
-            image-rendering: pixelated;
-            image-rendering: -moz-crisp-edges;
-            image-rendering: crisp-edges;
-        }
-        
-        /* Control Panel */
-        #controlPanel {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 95%;
-            height: 200px;
-            background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
-            border-radius: 10px;
-            box-shadow: 
-                inset 0 2px 5px rgba(0,0,0,0.5),
-                0 2px 5px rgba(255,255,255,0.1);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 20px;
-        }
-        
-        /* Joystick */
-        .joystick-container {
-            position: relative;
-            width: 100px;
-            height: 100px;
-            background: #1a1a1a;
-            border-radius: 50%;
-            box-shadow: 
-                inset 0 5px 15px rgba(0,0,0,0.8),
-                0 2px 5px rgba(255,255,255,0.1);
-        }
-        
-        .joystick {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 50px;
-            height: 50px;
-            background: radial-gradient(circle at 30% 30%, #ff3333, #cc0000);
-            border-radius: 50%;
-            box-shadow: 
-                0 5px 10px rgba(0,0,0,0.5),
-                inset 0 -5px 10px rgba(0,0,0,0.3);
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-        
-        /* Arcade Buttons */
-        .button-group {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
-        }
-        
-        .button-row {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .arcadeButton {
-            width: 60px;
-            height: 60px;
-            background: radial-gradient(circle at 30% 30%, #ff3333, #cc0000);
-            border: 4px solid #000;
-            border-radius: 50%;
-            box-shadow: 
-                0 5px 10px rgba(0,0,0,0.5),
-                inset 0 -5px 10px rgba(0,0,0,0.3);
-            cursor: pointer;
-            position: relative;
-            transition: all 0.1s;
-        }
-        
-        .arcadeButton.yellow {
-            background: radial-gradient(circle at 30% 30%, #FFD700, #FFA500);
-        }
-        
-        .arcadeButton.green {
-            background: radial-gradient(circle at 30% 30%, #00ff00, #00cc00);
-        }
-        
-        .arcadeButton.blue {
-            background: radial-gradient(circle at 30% 30%, #3333ff, #0000cc);
-        }
-        
-        .arcadeButton.small {
-            width: 40px;
-            height: 40px;
-        }
-        
-        .arcadeButton:active {
-            transform: translateY(3px);
-            box-shadow: 
-                0 2px 5px rgba(0,0,0,0.5),
-                inset 0 -2px 5px rgba(0,0,0,0.3);
-        }
-        
-        .arcadeButton::after {
-            position: absolute;
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #fff;
-            font-size: 10px;
-            font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-            white-space: nowrap;
-        }
-        
-        #jumpBtn::after { content: 'JUMP'; }
-        #startBtn::after { content: 'START'; }
-        #pauseBtn::after { content: 'PAUSE'; }
-        
-        /* HUD Display */
-        #hudDisplay {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #FFD700;
-            font-size: 16px;
-            text-align: center;
-            text-shadow: 2px 2px 0 #000;
-        }
-        
-        /* Mobile Adjustments */
-        @media (max-width: 600px) {
-            #arcadeMachine {
-                width: 95vw;
-                max-width: 400px;
-                height: auto;
-            }
-            
-            #marquee {
-                width: 90%;
-                font-size: 18px;
-            }
-            
-            #controlPanel {
-                flex-wrap: wrap;
-                height: auto;
-                gap: 10px;
-            }
-            
-            .joystick-container {
-                width: 80px;
-                height: 80px;
-            }
-            
-            .arcadeButton {
-                width: 50px;
-                height: 50px;
-            }
-            
-            .arcadeButton.small {
-                width: 35px;
-                height: 35px;
-            }
-        }
-    </style>
+/**
+ * Indicates the background of the stage.
+ * @type {Number}
+ */
+var fondo_escenario = 580;
 
-    <!-- Game Libraries and Scripts -->
-    <script src="js/arcade-detection.js"></script>
-    <script src="lib/quintus.js"></script>
-    <script src="lib/quintus_input.js"></script>
-    <script src="lib/quintus_scenes.js"></script>
-    <script src="lib/quintus_sprites.js"></script>
-    <script src="lib/quintus_touch.js"></script>
-    <script src="lib/quintus_ui.js"></script>
-    <script src="lib/quintus_tmx.js"></script>
-    <script src="lib/quintus_2d.js"></script>
-    <script src="lib/quintus_anim.js"></script>
-    <script src="lib/quintus_audio.js"></script>
-    <script src="js/game.js"></script>
-    <script src="js/nugget.js"></script>
-    <script src="js/defaultenemy.js"></script>
-    <script src="js/tangledyarn.js"></script>
-    <script src="js/cat.js"></script>
-    <script src="js/princessmabel.js"></script>
-    <script src="js/yarnball.js"></script>
-    <script src="js/endgame.js"></script>
-    <script src="js/maintitle.js"></script>
-    <script src="js/level1.js"></script>
-    <script src="js/hub.js"></script>
-</head>
+window.addEventListener('load', function() {
+    /**
+     * Main variable of the Quintus.
+     */
+    var Q = Quintus({ audioSupported: ['mp3', 'ogg'] })
+        /**
+         * The modules required for the application to function are added.
+         * the application.
+         */
+        .include('Sprites, Scenes, Input, 2D, Anim, Touch, UI, TMX, Audio')
+        /**
+         * The window is adjusted.
+         */
+        .setup({
+            width: 320,
+            height: 480
+        })
+        /**
+         * Functionality is added.
+         */
+        .controls().touch().enableSound();
+    /**
+     * We load the various components that we will use during the game.
+     */
+    loadNugget(Q);
+    loadPrincessMabel(Q);
 
-<body>
-<div id="arcadeMachine">
-    <div id="marquee"><h1>YDT BARNYARD BUDDIES</h1></div>
+    loadDefaultEnemy(Q);
+    loadTangledyarn(Q);
+    loadCat(Q);
 
-    <div id="screenBezel">
-        <div id="screenContainer">
-            <div id="hudDisplay"></div>
-            <canvas id="gameFrame" width="320" height="480"></canvas>
-        </div>
-    </div>
+    loadYarnball(Q);
 
-    <div id="controlPanel">
-        <div class="joystick-container">
-            <div class="joystick" id="joystick"></div>
-        </div>
-        <div class="button-row">
-            <button class="arcadeButton" id="jumpBtn"></button>
-        </div>
-        <div class="button-row">
-            <button class="arcadeButton small green" id="startBtn"></button>
-            <button class="arcadeButton small blue" id="pauseBtn"></button>
-        </div>
-    </div>
-</div>
+    loadEndGame(Q);
+    loadMainTitle(Q);
+    loadHUB(Q);
 
-<script>
-    // Use real window, not iframe
-    const gameWindow = window;
-
-    function simulateKey(key, isDown) {
-        const event = new KeyboardEvent(isDown ? 'keydown' : 'keyup', {
-            key,
-            bubbles: true
-        });
-        document.dispatchEvent(event);
-    }
-
-    function setupJoystick() {
-        const joystickEl = document.getElementById('joystick');
-        const container = joystickEl.parentElement;
-        let active = false, lastLeft = false, lastRight = false;
-
-        const updateJoystick = (e) => {
-            if (!active) return;
-            const rect = container.getBoundingClientRect();
-            const x = (e.touches ? e.touches[0].clientX : e.clientX) - (rect.left + rect.width / 2);
-            const moveX = Math.max(-rect.width/2 + 25, Math.min(rect.width/2 - 25, x));
-            joystickEl.style.transform = `translate(${moveX}px, 0)`;
-
-            const left = moveX < -10, right = moveX > 10;
-            if (left !== lastLeft) simulateKey('ArrowLeft', left), lastLeft = left;
-            if (right !== lastRight) simulateKey('ArrowRight', right), lastRight = right;
-        };
-
-        const start = (e) => { e.preventDefault(); active = true; updateJoystick(e); };
-        const end = () => { active = false; joystickEl.style.transform = 'translate(0, 0)';
-            simulateKey('ArrowLeft', false); simulateKey('ArrowRight', false);
-            lastLeft = lastRight = false; };
-
-        container.addEventListener('mousedown', start);
-        container.addEventListener('touchstart', start);
-        window.addEventListener('mousemove', updateJoystick);
-        window.addEventListener('touchmove', updateJoystick);
-        window.addEventListener('mouseup', end);
-        window.addEventListener('touchend', end);
-    }
-
-    function setupButton(id, key) {
-        const btn = document.getElementById(id);
-        if (!btn) return;
-        btn.addEventListener('mousedown', e => (e.preventDefault(), simulateKey(key, true)));
-        btn.addEventListener('touchstart', e => (e.preventDefault(), simulateKey(key, true)));
-        btn.addEventListener('mouseup', e => (e.preventDefault(), simulateKey(key, false)));
-        btn.addEventListener('touchend', e => (e.preventDefault(), simulateKey(key, false)));
-        btn.addEventListener('mouseleave', e => (e.preventDefault(), simulateKey(key, false)));
-    }
-
-    function setupControls() {
-        setupJoystick();
-        setupButton('jumpBtn', 'ArrowUp');
-        setupButton('startBtn', 'Enter');
-        setupButton('pauseBtn', 'Escape');
-    }
-
-    window.addEventListener('load', () => {
-        setupControls();
+    loadLevel1(Q);
+    /**
+     * We load the files we need for the game.
+     */
+    Q.loadTMX('level.tmx, mainTitle.png, nugget_small.png, nugget_small.json, tangledyarn.png, tangledyarn.json, cat.png, cat.json, princess.png, yarnball.png, yarnball.json, music_main.mp3, music_main.ogg, music_die.mp3, music_die.ogg, music_level_complete.mp3, music_level_complete.ogg, yarnball.mp3, yarnball.ogg', function() {
+        Q.compileSheets('nugget_small.png', 'nugget_small.json');
+        Q.compileSheets('tangledyarn.png', 'tangledyarn.json');
+        Q.compileSheets('cat.png', 'cat.json');
+        Q.compileSheets('yarnball.png', 'yarnball.json');
+        Q.stageScene('mainTitle');
     });
-
-    setInterval(() => {
-        try {
-            if (window.Q && Q.state) {
-                const hud = document.getElementById('hudDisplay');
-                const coins = Q.state.get('coins') || 0;
-                hud.textContent = `COINS: ${coins}`;
-            }
-        } catch (e) {}
-    }, 100);
-</script>
-</body>
-</html>
+});
