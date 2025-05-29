@@ -1,3 +1,24 @@
+/* === Wrapper & Viewport Setup for JS Scaling === */
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#arcadeWrapper {
+  /* fills the viewport and centers its contents */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  /* make the JS scale originate from the top-center */
+  transform-origin: top center;
+}
+
 /* === Reset and Pixelated Rendering === */
 * {
   margin: 0;
