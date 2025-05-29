@@ -1,32 +1,32 @@
-function loadPrincessPeach(Q) {
+function loadPrincessMabel(Q) {
 
     /**
-     * Clase que representa a la Princesa Peach.
+     * Class representing Princess Mabel.
      */
-    Q.Sprite.extend('Princess', {
+    Q.Sprite.extend('princess', {
         init: function(p) {
             this._super(p, {
                 /**
-                 * Imagen de Peach.
+                 * Image of Mabel.
                  */
                 asset: 'princess.png',
                 /**
-                 * Posición inicial de Peach.
+                 * Mabel's starting position.
                  */
                 x: 2000,
                 y: 452,
                 /**
-                 * Activamos el sensor de Peach.
+                 * We activate Mabel's sensor.
                  */
                 sensor: true
             });
             /**
-             * Necesario para implementar el sensor.
+             * Required to deploy the sensor.
              */
             this.on('sensor');
         },
         /**
-         * Sensor de la princesa Peach.
+         * Princess Mabel's Sensor.
          */
         sensor: function() {
             this.p.sensor = false;
