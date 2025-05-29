@@ -1,16 +1,10 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super YDT Buddies - Arcade</title>
-
-    <!-- Styles for the arcade machine -->
-    <link rel="stylesheet" type="text/css" href="css/arcade_layout.css"> <!-- इंश्योर दिस फाइल EXISTS and has the CSS -->
-    <!-- Original game styles (if any specific to canvas, otherwise might be empty) -->
+    <title>Super YDT Buddies</title>
     <link rel="stylesheet" type="text/css" href="css/style.css">
-
-    <!-- Quintus Library Scripts -->
     <script type="text/javascript" src='lib/quintus.js'></script>
     <script type="text/javascript" src='lib/quintus_input.js'></script>
     <script type="text/javascript" src='lib/quintus_scenes.js'></script>
@@ -21,8 +15,6 @@
     <script type="text/javascript" src='lib/quintus_2d.js'></script>
     <script type="text/javascript" src='lib/quintus_anim.js'></script>
     <script type="text/javascript" src='lib/quintus_audio.js'></script>
-
-    <!-- Your Game Scripts -->
     <script type="text/javascript" src='js/game.js'></script>
     <script type="text/javascript" src='js/nugget.js'></script>
     <script type="text/javascript" src='js/defaultenemy.js'></script>
@@ -35,71 +27,8 @@
     <script type="text/javascript" src='js/level1.js'></script>
     <script type="text/javascript" src='js/hub.js'></script>
 </head>
+
 <body>
-    <div id="arcadeMachine">
-        <div id="marquee">
-            <h1>SUPER YDT BUDDIES</h1>
-        </div>
-
-        <div id="screenBezel">
-            <div id="screenContainer">
-                <!-- Canvas for Quintus game -->
-                <canvas id="gameCanvas" width="640" height="480"></canvas>
-            </div>
-        </div>
-
-        <div id="controlPanel">
-            <div class="joystick-container">
-                <div class="joystick" id="joystick"></div>
-            </div>
-            <button class="arcadeButton" id="jumpBtn"></button>
-            <button class="arcadeButton yellow" id="abilityBtn"></button>
-            <button class="arcadeButton small green" id="startBtn"></button>
-        </div>
-    </div>
-
-    <!-- Optional: Script to hook up arcade buttons to Quintus input -->
-    <script>
-        window.addEventListener('load', function() {
-            if(window.Q) { // Make sure Quintus is loaded
-                const jumpButton = document.getElementById('jumpBtn');
-                if(jumpButton) {
-                    const fireAction = function(e) { e.preventDefault(); Q.inputs['fire'] = true; Q.input.trigger('fire'); };
-                    const fireUpAction = function(e) { e.preventDefault(); Q.inputs['fire'] = false; Q.input.trigger('fireUp'); };
-                    jumpButton.addEventListener('mousedown', fireAction);
-                    jumpButton.addEventListener('mouseup', fireUpAction);
-                    jumpButton.addEventListener('touchstart', fireAction, { passive: false });
-                    jumpButton.addEventListener('touchend', fireUpAction, { passive: false });
-                }
-
-                // Example for 'action' button
-                const abilityButton = document.getElementById('abilityBtn');
-                if(abilityButton) {
-                    const actionAction = function(e) { e.preventDefault(); Q.inputs['action'] = true; Q.input.trigger('action'); };
-                    const actionUpAction = function(e) { e.preventDefault(); Q.inputs['action'] = false; Q.input.trigger('actionUp'); };
-                    abilityButton.addEventListener('mousedown', actionAction);
-                    abilityButton.addEventListener('mouseup', actionUpAction);
-                    abilityButton.addEventListener('touchstart', actionAction, { passive: false });
-                    abilityButton.addEventListener('touchend', actionUpAction, { passive: false });
-                }
-
-                // Example for 'start' button (maps to 'confirm' in Quintus default keys)
-                const startButton = document.getElementById('startBtn');
-                if(startButton) {
-                    const confirmAction = function(e) { e.preventDefault(); Q.inputs['confirm'] = true; Q.input.trigger('confirm'); };
-                    const confirmUpAction = function(e) { e.preventDefault(); Q.inputs['confirm'] = false; Q.input.trigger('confirmUp'); };
-                    startButton.addEventListener('mousedown', confirmAction);
-                    startButton.addEventListener('mouseup', confirmUpAction);
-                    startButton.addEventListener('touchstart', confirmAction, { passive: false });
-                    startButton.addEventListener('touchend', confirmUpAction, { passive: false });
-                }
-
-                // Joystick - This is more complex and might require continuously updating Q.inputs['left']/['right']
-                // based on joystick position. For simplicity, you might rely on Quintus's built-in touch joypad
-                // or map the visual joystick to trigger discrete left/right presses if it's a simple 4-way stick.
-                // A full analog-style joystick to Quintus input requires more logic.
-            }
-        });
-    </script>
 </body>
+
 </html>
