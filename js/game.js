@@ -17,10 +17,10 @@ window.addEventListener('load', function() {
         /**
          * The window is adjusted.
          */
-        .setup({
-            width: 320,
-            height: 480
-        })
+.setup("gameFrame", {
+    width: 320,
+    height: 480
+})
         /**
          * Functionality is added.
          */
