@@ -1,6 +1,6 @@
 function loadMainTitle(Q) {
     /**
-     * Escena que representa a la pantalla principal.
+     * Scene representing the main screen.
      */
     Q.scene('mainTitle', function(stage) {
         var container = stage.insert(new Q.UI.Container({
