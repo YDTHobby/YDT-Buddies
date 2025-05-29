@@ -321,30 +321,25 @@
       setTimeout(() => {
         if (gameWindow.Q) {
           gameQ = gameWindow.Q;
-
-          // Inject Q.inputs if missing
-          if (!gameQ.inputs) {
-            gameQ.inputs = {
-              left: false,
-              right: false,
-              up: false,
-              down: false,
-              fire: false,
-              confirm: false,
-              action: false,
-              pause: false
-            };
-          }
-
           setupControls();
         }
       }, 1000);
     };
 
+    function simulateKey(key, isDown) {
+      const event = new KeyboardEvent(isDown ? 'keydown' : 'keyup', {
+        key,
+        bubbles: true
+      });
+      window.dispatchEvent(event);
+    }
+
     function setupJoystick() {
       const joystickEl = document.getElementById('joystick');
       const container = joystickEl.parentElement;
       let active = false;
+      let lastLeft = false;
+      let lastRight = false;
 
       const updateJoystick = (e) => {
         if (!active) return;
@@ -363,24 +358,24 @@
         const maxDistance = rect.width / 2 - 25;
 
         let moveX = x;
-        let moveY = y;
-
         if (distance > maxDistance) {
           const angle = Math.atan2(y, x);
           moveX = Math.cos(angle) * maxDistance;
-          moveY = Math.sin(angle) * maxDistance;
         }
 
-        joystickEl.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        joystickEl.style.transform = `translate(${moveX}px, 0)`;
 
-        if (gameQ && gameQ.inputs) {
-          gameQ.inputs.left = false;
-          gameQ.inputs.right = false;
+        const goingLeft = moveX < -10;
+        const goingRight = moveX > 10;
 
-          if (Math.abs(moveX) > 10) {
-            if (moveX < 0) gameQ.inputs.left = true;
-            else gameQ.inputs.right = true;
-          }
+        if (goingLeft !== lastLeft) {
+          simulateKey('ArrowLeft', goingLeft);
+          lastLeft = goingLeft;
+        }
+
+        if (goingRight !== lastRight) {
+          simulateKey('ArrowRight', goingRight);
+          lastRight = goingRight;
         }
       };
 
@@ -393,10 +388,10 @@
       const endJoystick = () => {
         active = false;
         joystickEl.style.transform = 'translate(0, 0)';
-        if (gameQ && gameQ.inputs) {
-          gameQ.inputs.left = false;
-          gameQ.inputs.right = false;
-        }
+        simulateKey('ArrowLeft', false);
+        simulateKey('ArrowRight', false);
+        lastLeft = false;
+        lastRight = false;
       };
 
       container.addEventListener('mousedown', startJoystick);
@@ -409,64 +404,32 @@
       window.addEventListener('touchend', endJoystick);
     }
 
-    function setupButtons() {
-      const setupButton = (id, action) => {
-        const btn = document.getElementById(id);
-        if (!btn) return;
+    function setupButton(id, key) {
+      const btn = document.getElementById(id);
+      if (!btn) return;
 
-        const press = (e) => {
-          e.preventDefault();
-          if (gameQ && gameQ.inputs) gameQ.inputs[action] = true;
-        };
-
-        const release = (e) => {
-          e.preventDefault();
-          if (gameQ && gameQ.inputs) gameQ.inputs[action] = false;
-        };
-
-        btn.addEventListener('mousedown', press);
-        btn.addEventListener('touchstart', press);
-        btn.addEventListener('mouseup', release);
-        btn.addEventListener('touchend', release);
-        btn.addEventListener('mouseleave', release);
+      const press = (e) => {
+        e.preventDefault();
+        simulateKey(key, true);
       };
 
-      setupButton('jumpBtn', 'fire');
-      setupButton('startBtn', 'confirm');
-      setupButton('pauseBtn', 'pause');
+      const release = (e) => {
+        e.preventDefault();
+        simulateKey(key, false);
+      };
+
+      btn.addEventListener('mousedown', press);
+      btn.addEventListener('touchstart', press);
+      btn.addEventListener('mouseup', release);
+      btn.addEventListener('touchend', release);
+      btn.addEventListener('mouseleave', release);
     }
 
     function setupControls() {
       setupJoystick();
-      setupButtons();
-
-      window.addEventListener('keydown', (e) => {
-        if (!gameQ || !gameQ.inputs) return;
-        switch (e.key) {
-          case 'ArrowLeft': case 'a': case 'A': gameQ.inputs.left = true; break;
-          case 'ArrowRight': case 'd': case 'D': gameQ.inputs.right = true; break;
-          case 'ArrowUp': case 'w': case 'W': gameQ.inputs.up = true; break;
-          case 'ArrowDown': case 's': case 'S': gameQ.inputs.down = true; break;
-          case ' ': case 'z': case 'Z': gameQ.inputs.fire = true; break;
-          case 'x': case 'X': gameQ.inputs.action = true; break;
-          case 'Enter': gameQ.inputs.confirm = true; break;
-          case 'Escape': gameQ.inputs.pause = true; break;
-        }
-      });
-
-      window.addEventListener('keyup', (e) => {
-        if (!gameQ || !gameQ.inputs) return;
-        switch (e.key) {
-          case 'ArrowLeft': case 'a': case 'A': gameQ.inputs.left = false; break;
-          case 'ArrowRight': case 'd': case 'D': gameQ.inputs.right = false; break;
-          case 'ArrowUp': case 'w': case 'W': gameQ.inputs.up = false; break;
-          case 'ArrowDown': case 's': case 'S': gameQ.inputs.down = false; break;
-          case ' ': case 'z': case 'Z': gameQ.inputs.fire = false; break;
-          case 'x': case 'X': gameQ.inputs.action = false; break;
-          case 'Enter': gameQ.inputs.confirm = false; break;
-          case 'Escape': gameQ.inputs.pause = false; break;
-        }
-      });
+      setupButton('jumpBtn', 'ArrowUp');
+      setupButton('startBtn', 'Enter');
+      setupButton('pauseBtn', 'Escape');
     }
 
     setInterval(() => {
