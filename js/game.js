@@ -6,17 +6,19 @@ var Q = Quintus({ audioSupported: ['mp3', 'ogg'] })
     .setup({
         width: 320,
         height: 480
-    })
-    .input.keyboardControls({
-        LEFT: 'left',
-        RIGHT: 'right',
-        SPACE: 'fire',
-        ENTER: 'confirm',
-        ESC: 'pause'
-    })
-    .controls()
-    .touch()
-    .enableSound();
+    });
+
+Q.input.keyboardControls({
+    LEFT: 'left',
+    RIGHT: 'right',
+    SPACE: 'fire',
+    ENTER: 'confirm',
+    ESC: 'pause'
+});
+Q.controls();
+Q.touch();
+Q.enableSound();
+
 
 
 
