@@ -170,13 +170,17 @@
   <script>
 function scaleArcade() {
   const wrap = document.getElementById('arcadeWrapper');
-  const W = window.innerWidth, H = window.innerHeight;
-  const scale = Math.min(W/500, H/900);
+  const W = window.innerWidth;
+  const H = window.innerHeight;
+  // compute the fit ratio...
+  const ratio = Math.min(W/500, H/900);
+  // ...but never go above 1
+  const scale = Math.min(ratio, 1);
   wrap.style.transform = `scale(${scale})`;
 }
 
-window.addEventListener('resize',  scaleArcade);
-window.addEventListener('load',    scaleArcade);
+window.addEventListener('resize', scaleArcade);
+window.addEventListener('load',   scaleArcade);
 
   </script>
 </body>
