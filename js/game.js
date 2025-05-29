@@ -11,7 +11,6 @@ window.addEventListener('load', function() {
     var Q = Quintus({ audioSupported: ['mp3', 'ogg'] })
         /**
          * The modules required for the application to function are added.
-         * the application.
          */
         .include('Sprites, Scenes, Input, 2D, Anim, Touch, UI, TMX, Audio')
         /**
@@ -20,28 +19,44 @@ window.addEventListener('load', function() {
         .setup({
             width: 320,
             height: 480
-        })
-        /**
-         * Functionality is added.
-         */
-        .controls().touch().enableSound();
+        });
+
+    /**
+     * Add key mappings so that both standard keys and Arrow keys work.
+     */
+    Q.input.keyboardControls({
+        LEFT: 'left',
+        RIGHT: 'right',
+        UP: 'up',
+        DOWN: 'down',
+        SPACE: 'fire',
+        ENTER: 'confirm',
+        ESC: 'pause',
+        ArrowLeft: 'left',
+        ArrowRight: 'right',
+        ArrowUp: 'up',
+        ArrowDown: 'down'
+    });
+
+    /**
+     * Enable game controls, touch input, and sound.
+     */
+    Q.controls().touch().enableSound();
+
     /**
      * We load the various components that we will use during the game.
      */
     loadNugget(Q);
     loadPrincessMabel(Q);
-
     loadDefaultEnemy(Q);
     loadTangledyarn(Q);
     loadCat(Q);
-
     loadYarnball(Q);
-
     loadEndGame(Q);
     loadMainTitle(Q);
     loadHUB(Q);
-
     loadLevel1(Q);
+
     /**
      * We load the files we need for the game.
      */
