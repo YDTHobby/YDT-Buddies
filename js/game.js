@@ -1,19 +1,23 @@
 var fondo_escenario = 580;
 
 window.addEventListener('load', function() {
-    var Q = Quintus({ audioSupported: ['mp3', 'ogg'] })
-        .include('Sprites, Scenes, Input, 2D, Anim, Touch, UI, TMX, Audio')
-        .setup({
-            width: 320,
-            height: 480
-        })
-        .controls().input.keyboardControls({
-  LEFT: 'left',
-  RIGHT: 'right',
-  SPACE: 'fire',
-  ENTER: 'confirm',
-  ESC: 'pause'
-}).touch().enableSound();
+var Q = Quintus({ audioSupported: ['mp3', 'ogg'] })
+    .include('Sprites, Scenes, Input, 2D, Anim, Touch, UI, TMX, Audio')
+    .setup({
+        width: 320,
+        height: 480
+    })
+    .input.keyboardControls({
+        LEFT: 'left',
+        RIGHT: 'right',
+        SPACE: 'fire',
+        ENTER: 'confirm',
+        ESC: 'pause'
+    })
+    .controls()
+    .touch()
+    .enableSound();
+
 
 
     loadNugget(Q);
