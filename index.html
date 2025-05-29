@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>YDT Barnyard Buddies - Arcade Machine</title>
-    <!-- Game Styles -->
     <link rel="stylesheet" type="text/css" href="css/style.css">
-
-    <!-- Wrapper & Screen Styles -->
     <style>
         * {
             margin: 0;
@@ -16,6 +13,7 @@
             image-rendering: -moz-crisp-edges;
             image-rendering: crisp-edges;
         }
+        
         body {
             background: #1a1a1a;
             display: flex;
@@ -25,19 +23,23 @@
             font-family: 'Courier New', monospace;
             overflow: hidden;
         }
+        
+        /* Arcade Machine - Adjusted for 320x480 aspect ratio */
         #arcadeMachine {
             position: relative;
             width: 500px;
             height: 900px;
             background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
             border-radius: 20px 20px 10px 10px;
-            box-shadow:
+            box-shadow: 
                 0 0 50px rgba(0,0,0,0.8),
                 inset 0 0 20px rgba(255,255,255,0.1);
             padding: 20px;
             padding-top: 40px;
             transform: perspective(1000px) rotateX(2deg);
         }
+        
+        /* Marquee */
         #marquee {
             position: absolute;
             top: -80px;
@@ -50,10 +52,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow:
+            box-shadow: 
                 0 0 30px rgba(139,69,19,0.5),
                 inset 0 0 20px rgba(255,255,255,0.3);
         }
+        
         #marquee h1 {
             color: #FFF;
             font-size: 24px;
@@ -61,6 +64,8 @@
             font-weight: bold;
             letter-spacing: 2px;
         }
+        
+        /* Screen */
         #screenBezel {
             position: relative;
             width: 100%;
@@ -68,10 +73,11 @@
             background: #000;
             border-radius: 15px;
             padding: 20px;
-            box-shadow:
+            box-shadow: 
                 inset 0 0 30px rgba(0,0,0,0.8),
                 0 0 10px rgba(255,255,255,0.1);
         }
+        
         #screenContainer {
             position: relative;
             width: 100%;
@@ -84,20 +90,8 @@
             justify-content: center;
             align-items: center;
         }
-        /* Ensure game canvas fits inside screenContainer */
-        #gameContainer {
-            position: relative;
-            width: 100%;
-            height: 100%;
-        }
-        #screenContainer canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
+        
+        /* CRT Effect */
         #screenContainer::before {
             content: '';
             position: absolute;
@@ -115,6 +109,18 @@
             pointer-events: none;
             z-index: 1000;
         }
+        
+        /* Game Frame */
+        #gameFrame {
+            width: 320px;
+            height: 480px;
+            border: none;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+        
+        /* Control Panel */
         #controlPanel {
             position: absolute;
             bottom: 20px;
@@ -124,7 +130,7 @@
             height: 200px;
             background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
             border-radius: 10px;
-            box-shadow:
+            box-shadow: 
                 inset 0 2px 5px rgba(0,0,0,0.5),
                 0 2px 5px rgba(255,255,255,0.1);
             display: flex;
@@ -132,16 +138,19 @@
             align-items: center;
             padding: 20px;
         }
+        
+        /* Joystick */
         .joystick-container {
             position: relative;
             width: 100px;
             height: 100px;
             background: #1a1a1a;
             border-radius: 50%;
-            box-shadow:
+            box-shadow: 
                 inset 0 5px 15px rgba(0,0,0,0.8),
                 0 2px 5px rgba(255,255,255,0.1);
         }
+        
         .joystick {
             position: absolute;
             top: 50%;
@@ -151,36 +160,64 @@
             height: 50px;
             background: radial-gradient(circle at 30% 30%, #ff3333, #cc0000);
             border-radius: 50%;
-            box-shadow:
+            box-shadow: 
                 0 5px 10px rgba(0,0,0,0.5),
                 inset 0 -5px 10px rgba(0,0,0,0.3);
             cursor: pointer;
             transition: transform 0.1s;
         }
-        .button-row { display: flex; gap: 15px; align-items: center; }
+        
+        /* Arcade Buttons */
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .button-row {
+            display: flex;
+            gap: 15px;
+        }
+        
         .arcadeButton {
             width: 60px;
             height: 60px;
             background: radial-gradient(circle at 30% 30%, #ff3333, #cc0000);
             border: 4px solid #000;
             border-radius: 50%;
-            box-shadow:
+            box-shadow: 
                 0 5px 10px rgba(0,0,0,0.5),
                 inset 0 -5px 10px rgba(0,0,0,0.3);
             cursor: pointer;
             position: relative;
             transition: all 0.1s;
         }
-        .arcadeButton.small { width: 40px; height: 40px; }
-        .arcadeButton.yellow { background: radial-gradient(circle at 30% 30%, #FFD700, #FFA500); }
-        .arcadeButton.green  { background: radial-gradient(circle at 30% 30%, #00ff00, #00cc00); }
-        .arcadeButton.blue   { background: radial-gradient(circle at 30% 30%, #3333ff, #0000cc); }
+        
+        .arcadeButton.yellow {
+            background: radial-gradient(circle at 30% 30%, #FFD700, #FFA500);
+        }
+        
+        .arcadeButton.green {
+            background: radial-gradient(circle at 30% 30%, #00ff00, #00cc00);
+        }
+        
+        .arcadeButton.blue {
+            background: radial-gradient(circle at 30% 30%, #3333ff, #0000cc);
+        }
+        
+        .arcadeButton.small {
+            width: 40px;
+            height: 40px;
+        }
+        
         .arcadeButton:active {
             transform: translateY(3px);
-            box-shadow:
+            box-shadow: 
                 0 2px 5px rgba(0,0,0,0.5),
                 inset 0 -2px 5px rgba(0,0,0,0.3);
         }
+        
         .arcadeButton::after {
             position: absolute;
             bottom: -20px;
@@ -192,9 +229,12 @@
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
             white-space: nowrap;
         }
-        #jumpBtn::after  { content: 'JUMP'; }
+        
+        #jumpBtn::after { content: 'JUMP'; }
         #startBtn::after { content: 'START'; }
         #pauseBtn::after { content: 'PAUSE'; }
+        
+        /* HUD Display */
         #hudDisplay {
             position: absolute;
             top: 10px;
@@ -205,17 +245,44 @@
             text-align: center;
             text-shadow: 2px 2px 0 #000;
         }
+        
+        /* Mobile Adjustments */
         @media (max-width: 600px) {
-            #arcadeMachine { width: 95vw; max-width: 400px; height: auto; }
-            #marquee      { width: 90%; font-size: 18px; }
-            #controlPanel { flex-wrap: wrap; height: auto; gap: 10px; }
-            .joystick-container { width: 80px; height: 80px; }
-            .arcadeButton       { width: 50px; height: 50px; }
-            .arcadeButton.small { width: 35px; height: 35px; }
+            #arcadeMachine {
+                width: 95vw;
+                max-width: 400px;
+                height: auto;
+            }
+            
+            #marquee {
+                width: 90%;
+                font-size: 18px;
+            }
+            
+            #controlPanel {
+                flex-wrap: wrap;
+                height: auto;
+                gap: 10px;
+            }
+            
+            .joystick-container {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .arcadeButton {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .arcadeButton.small {
+                width: 35px;
+                height: 35px;
+            }
         }
     </style>
 
-    <!-- Arcade & Game Scripts -->
+    <!-- Game Libraries and Scripts -->
     <script src="js/arcade-detection.js"></script>
     <script src="lib/quintus.js"></script>
     <script src="lib/quintus_input.js"></script>
@@ -239,106 +306,104 @@
     <script src="js/level1.js"></script>
     <script src="js/hub.js"></script>
 </head>
+
 <body>
-    <div id="arcadeMachine">
-        <div id="marquee"><h1>YDT BARNYARD BUDDIES</h1></div>
-        <div id="screenBezel">
-            <div id="screenContainer">
-                <div id="hudDisplay"></div>
-                <div id="gameContainer"></div>
-            </div>
-        </div>
-        <div id="controlPanel">
-            <div class="joystick-container">
-                <div class="joystick" id="joystick"></div>
-            </div>
-            <div class="button-row">
-                <button class="arcadeButton" id="jumpBtn"></button>
-            </div>
-            <div class="button-row">
-                <button class="arcadeButton small green" id="startBtn"></button>
-                <button class="arcadeButton small blue" id="pauseBtn"></button>
-            </div>
+<div id="arcadeMachine">
+    <div id="marquee"><h1>YDT BARNYARD BUDDIES</h1></div>
+
+    <div id="screenBezel">
+        <div id="screenContainer">
+            <div id="hudDisplay"></div>
+            <canvas id="gameFrame" width="320" height="480"></canvas>
         </div>
     </div>
 
-    <!-- Control & HUD Script -->
-    <script>
-        function simulateKey(key, isDown) {
-            const evt = new KeyboardEvent(isDown ? 'keydown' : 'keyup', { key, bubbles: true });
-            document.dispatchEvent(evt);
-        }
-        function setupJoystick() {
-            const joystickEl = document.getElementById('joystick');
-            const container = joystickEl.parentElement;
-            let active = false, lastLeft = false, lastRight = false;
-            const update = e => {
-                if (!active) return;
-                const rect = container.getBoundingClientRect();
-                const x = (e.touches ? e.touches[0].clientX : e.clientX) - (rect.left + rect.width/2);
-                const max = rect.width/2 - 25;
-                const moveX = Math.max(-max, Math.min(max, x));
-                joystickEl.style.transform = `translate(${moveX}px, 0)`;
-                const goLeft = moveX < -10;
-                const goRight = moveX > 10;
-                if (goLeft !== lastLeft) { simulateKey('ArrowLeft', goLeft); lastLeft = goLeft; }
-                if (goRight !== lastRight) { simulateKey('ArrowRight', goRight); lastRight = goRight; }
-            };
-            const start = e => { e.preventDefault(); active = true; update(e); };
-            const end = () => {
-                active = false;
-                joystickEl.style.transform = 'translate(0,0)';
-                simulateKey('ArrowLeft', false);
-                simulateKey('ArrowRight', false);
-                lastLeft = lastRight = false;
-            };
-            container.addEventListener('mousedown', start);
-            container.addEventListener('touchstart', start);
-            window.addEventListener('mousemove', update);
-            window.addEventListener('touchmove', update);
-            window.addEventListener('mouseup', end);
-            window.addEventListener('touchend', end);
-        }
-        function setupButton(id, key) {
-            const btn = document.getElementById(id);
-            if (!btn) return;
-            const press   = e => { e.preventDefault(); simulateKey(key, true); };
-            const release = e => { e.preventDefault(); simulateKey(key, false); };
-            btn.addEventListener('mousedown', press);
-            btn.addEventListener('touchstart', press);
-            btn.addEventListener('mouseup', release);
-            btn.addEventListener('touchend', release);
-            btn.addEventListener('mouseleave', release);
-        }
-        function setupControls() {
-            setupJoystick();
-            setupButton('jumpBtn','ArrowUp');
-            setupButton('startBtn','Enter');
-            setupButton('pauseBtn','Escape');
-        }
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                setupControls();
-                // move the Quintus canvas into our bezel
-                const attach = () => {
-                    const gameCanvas = document.querySelector('canvas');
-                    if (gameCanvas) {
-                        document.getElementById('gameContainer').appendChild(gameCanvas);
-                        gameCanvas.style.width = '100%';
-                        gameCanvas.style.height = '100%';
-                    } else {
-                        setTimeout(attach, 100);
-                    }
-                };
-                attach();
-            }, 1000);
+    <div id="controlPanel">
+        <div class="joystick-container">
+            <div class="joystick" id="joystick"></div>
+        </div>
+        <div class="button-row">
+            <button class="arcadeButton" id="jumpBtn"></button>
+        </div>
+        <div class="button-row">
+            <button class="arcadeButton small green" id="startBtn"></button>
+            <button class="arcadeButton small blue" id="pauseBtn"></button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Use real window, not iframe
+    const gameWindow = window;
+
+    function simulateKey(key, isDown) {
+        const event = new KeyboardEvent(isDown ? 'keydown' : 'keyup', {
+            key,
+            bubbles: true
         });
-        setInterval(() => {
+        document.dispatchEvent(event);
+    }
+
+    function setupJoystick() {
+        const joystickEl = document.getElementById('joystick');
+        const container = joystickEl.parentElement;
+        let active = false, lastLeft = false, lastRight = false;
+
+        const updateJoystick = (e) => {
+            if (!active) return;
+            const rect = container.getBoundingClientRect();
+            const x = (e.touches ? e.touches[0].clientX : e.clientX) - (rect.left + rect.width / 2);
+            const moveX = Math.max(-rect.width/2 + 25, Math.min(rect.width/2 - 25, x));
+            joystickEl.style.transform = translate(${moveX}px, 0);
+
+            const left = moveX < -10, right = moveX > 10;
+            if (left !== lastLeft) simulateKey('ArrowLeft', left), lastLeft = left;
+            if (right !== lastRight) simulateKey('ArrowRight', right), lastRight = right;
+        };
+
+        const start = (e) => { e.preventDefault(); active = true; updateJoystick(e); };
+        const end = () => { active = false; joystickEl.style.transform = 'translate(0, 0)';
+            simulateKey('ArrowLeft', false); simulateKey('ArrowRight', false);
+            lastLeft = lastRight = false; };
+
+        container.addEventListener('mousedown', start);
+        container.addEventListener('touchstart', start);
+        window.addEventListener('mousemove', updateJoystick);
+        window.addEventListener('touchmove', updateJoystick);
+        window.addEventListener('mouseup', end);
+        window.addEventListener('touchend', end);
+    }
+
+    function setupButton(id, key) {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        btn.addEventListener('mousedown', e => (e.preventDefault(), simulateKey(key, true)));
+        btn.addEventListener('touchstart', e => (e.preventDefault(), simulateKey(key, true)));
+        btn.addEventListener('mouseup', e => (e.preventDefault(), simulateKey(key, false)));
+        btn.addEventListener('touchend', e => (e.preventDefault(), simulateKey(key, false)));
+        btn.addEventListener('mouseleave', e => (e.preventDefault(), simulateKey(key, false)));
+    }
+
+    function setupControls() {
+        setupJoystick();
+        setupButton('jumpBtn', 'ArrowUp');
+        setupButton('startBtn', 'Enter');
+        setupButton('pauseBtn', 'Escape');
+    }
+
+    window.addEventListener('load', () => {
+        setupControls();
+    });
+
+    setInterval(() => {
+        try {
             if (window.Q && Q.state) {
+                const hud = document.getElementById('hudDisplay');
                 const coins = Q.state.get('coins') || 0;
-                document.getElementById('hudDisplay').textContent = `COINS: ${coins}`;
+                hud.textContent = COINS: ${coins};
             }
-        }, 100);
-    </script>
+        } catch (e) {}
+    }, 100);
+</script>
 </body>
 </html>
