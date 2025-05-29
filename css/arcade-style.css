@@ -1,0 +1,182 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+body {
+  background: #1a1a1a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Courier New', monospace;
+  overflow: hidden;
+}
+
+#arcadeMachine {
+  position: relative;
+  width: 800px;
+  height: 900px;
+  background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+  border-radius: 20px 20px 10px 10px;
+  box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.1);
+  padding: 20px;
+  padding-top: 40px;
+  transform: perspective(1000px) rotateX(2deg);
+}
+
+#marquee {
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 80px;
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  border-radius: 10px 10px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 30px rgba(255,215,0,0.5), inset 0 0 20px rgba(255,255,255,0.3);
+}
+
+#marquee h1 {
+  color: #333;
+  font-size: 32px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  font-weight: bold;
+  letter-spacing: 3px;
+}
+
+#screenBezel {
+  position: relative;
+  width: 100%;
+  height: 600px;
+  background: #000;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 0 10px rgba(255,255,255,0.1);
+}
+
+#screenContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #111;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.9);
+}
+
+#screenContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0,0,0,0.15) 0px,
+    transparent 1px,
+    transparent 2px,
+    rgba(0,0,0,0.15) 3px
+  );
+  pointer-events: none;
+  z-index: 1000;
+}
+
+#gameCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#controlPanel {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 95%;
+  height: 200px;
+  background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
+  border-radius: 10px;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.5), 0 2px 5px rgba(255,255,255,0.1);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 20px;
+}
+
+.joystick-container {
+  width: 120px;
+  height: 120px;
+  background: #1a1a1a;
+  border-radius: 50%;
+  box-shadow: inset 0 5px 15px rgba(0,0,0,0.8), 0 2px 5px rgba(255,255,255,0.1);
+  position: relative;
+}
+
+.joystick {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle at 30% 30%, #ff3333, #cc0000);
+  border-radius: 50%;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.5), inset 0 -5px 10px rgba(0,0,0,0.3);
+}
+
+.arcadeButton {
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle at 30% 30%, #ff3333, #cc0000);
+  border: 5px solid #000;
+  border-radius: 50%;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.5), inset 0 -5px 10px rgba(0,0,0,0.3);
+}
+
+.arcadeButton.yellow { background: radial-gradient(circle at 30% 30%, #FFD700, #FFA500); }
+.arcadeButton.green  { background: radial-gradient(circle at 30% 30%, #00ff00, #00cc00); }
+.arcadeButton.small  { width: 50px; height: 50px; }
+
+.arcadeButton:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5), inset 0 -2px 5px rgba(0,0,0,0.3);
+}
+
+#gameHUD {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.hud-section {
+  background: rgba(0,0,0,0.7);
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hud-text {
+  color: #FFF;
+  font-size: 18px;
+  font-weight: bold;
+  text-shadow: 2px 2px 0 #000;
+}
