@@ -5,14 +5,14 @@ function loadCat(Q) {
         'die': { frames: [2], loop: false }
     });
     /**
-     * Clase que representa al enemigo Cat.
+     * Class that represents the Cat enemy.
      */
     Q.Sprite.extend('Cat', {
         init: function(p) {
             this._super(p, {
                 sprite: 'Cat animation',
                 /**
-                 * Sprite del Cat.
+                 * Cat's Sprite.
                  */
                 sheet: 'Cat',
                 /**
@@ -21,27 +21,27 @@ function loadCat(Q) {
                 x: 1190,
                 y: 500,
                 /**
-                 * Parámetros de velocidad del Cat.
+                 * Cat. Starting Position
                  */
                 gravity: 0,
                 /**
-                 * Atributos adicionales.
+                 * Additional attributes.
                  */
                 time_jump: 0,
                 die: false,
                 collision: false
             });
             /**
-             * Los módulos Quintus necesarios.
+             * The necessary Quintus modules.
              */
             this.add('defaultEnemy');
             /**
-             * Definición de las funciones adicionales.
+             * Definition of additional functions.
              */
             this.on('die');
         },
         /**
-         * Muere el Cat.
+         * Cat dies.
          */
         die: function() {
             this.p.die = true;
@@ -58,20 +58,20 @@ function loadCat(Q) {
                 this.play('live');
                 this.p.time_jump += dt;
                 /**
-                 * Si toca está en el suelo, salta.
+                 * If you touch it is on the ground, jump.
                  */
                 if (this.p.vy == 0) {
                     this.p.vy = -70;
                     this.p.time_jump = 0;
                 }
                 /**
-                 * Indicamos el tiempo al que baja el Boolpa.
+                 * We indicate the time at which the Cat descends.
                  */
                 if (this.p.time_jump >= 1.5) {
                     this.p.vy = 70;
                 }
                 /**
-                 * En caso de caerse del escenario, Cat muere.
+                 * If Cat falls off the stage, they dies.
                  */
                 if (this.p.y > fondo_escenario) {
                     this.trigger('die');
