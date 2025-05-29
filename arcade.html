@@ -315,260 +315,187 @@
     
     <script>
         // Get the game iframe
-        const gameFrame = document.getElementById('gameFrame');
-        let gameWindow = null;
-        let gameQ = null;
-        
-        // Wait for the game to load
-        gameFrame.onload = function() {
-            gameWindow = gameFrame.contentWindow;
-            
-            // Try to access Quintus from the game
-            setTimeout(() => {
-                if (gameWindow.Q) {
-                    gameQ = gameWindow.Q;
-                    console.log('Connected to game!');
-                    setupControls();
+<script>
+    const gameFrame = document.getElementById('gameFrame');
+    let gameWindow = null;
+    let gameQ = null;
+
+    gameFrame.onload = function () {
+        gameWindow = gameFrame.contentWindow;
+
+        setTimeout(() => {
+            if (gameWindow.Q) {
+                gameQ = gameWindow.Q;
+                console.log('Connected to game!');
+                setupControls();
+            }
+        }, 1000);
+    };
+
+    function setupJoystick() {
+        const joystickEl = document.getElementById('joystick');
+        const container = joystickEl.parentElement;
+        let active = false;
+        let centerX = 0;
+        let centerY = 0;
+
+        const updateJoystick = (e) => {
+            if (!active) return;
+
+            const rect = container.getBoundingClientRect();
+            centerX = rect.left + rect.width / 2;
+            centerY = rect.top + rect.height / 2;
+
+            const x = (e.clientX || e.touches?.[0]?.clientX || 0) - centerX;
+            const y = (e.clientY || e.touches?.[0]?.clientY || 0) - centerY;
+
+            const distance = Math.sqrt(x * x + y * y);
+            const maxDistance = rect.width / 2 - 25;
+
+            let moveX = x;
+            let moveY = y;
+
+            if (distance > maxDistance) {
+                const angle = Math.atan2(y, x);
+                moveX = Math.cos(angle) * maxDistance;
+                moveY = Math.sin(angle) * maxDistance;
+            }
+
+            joystickEl.style.transform = `translate(${moveX}px, ${moveY}px)`;
+
+            if (gameQ && gameQ.inputs) {
+                gameQ.inputs['left'] = false;
+                gameQ.inputs['right'] = false;
+                gameQ.inputs['up'] = false;
+                gameQ.inputs['down'] = false;
+
+                if (Math.abs(moveX) > 10) {
+                    gameQ.inputs[moveX < 0 ? 'left' : 'right'] = true;
                 }
-            }, 1000);
+
+                if (moveY < -10) {
+                    gameQ.inputs['up'] = true;
+                }
+            }
         };
-        
-        // Joystick control
-        function setupJoystick() {
-            const joystickEl = document.getElementById('joystick');
-            const container = joystickEl.parentElement;
-            let active = false;
-            let centerX = 0;
-            let centerY = 0;
-            
-            const updateJoystick = (e) => {
-                if (!active) return;
-                
-                const rect = container.getBoundingClientRect();
-                centerX = rect.left + rect.width / 2;
-                centerY = rect.top + rect.height / 2;
-                
-                const x = (e.clientX || e.touches[0].clientX) - centerX;
-                const y = (e.clientY || e.touches[0].clientY) - centerY;
-                
-                const distance = Math.sqrt(x * x + y * y);
-                const maxDistance = rect.width / 2 - 25;
-                
-                let moveX = x;
-                let moveY = y;
-                
-                if (distance > maxDistance) {
-                    const angle = Math.atan2(y, x);
-                    moveX = Math.cos(angle) * maxDistance;
-                    moveY = Math.sin(angle) * maxDistance;
-                }
-                
-                joystickEl.style.transform = `translate(${moveX}px, ${moveY}px)`;
-                
-                // Send input to game
-                if (gameQ && gameQ.inputs) {
-                    // Clear all directions first
-                    gameQ.inputs['left'] = false;
-                    gameQ.inputs['right'] = false;
-                    gameQ.inputs['up'] = false;
-                    gameQ.inputs['down'] = false;
-                    
-                    // Set new directions based on joystick position
-                    if (Math.abs(moveX) > 10) {
-                        if (moveX < 0) {
-                            gameQ.inputs['left'] = true;
-                        } else {
-                            gameQ.inputs['right'] = true;
-                        }
-                    }
-                    
-                    if (moveY < -10) {
-                        gameQ.inputs['up'] = true;
-                    }
-                }
-            };
-            
-            const startJoystick = (e) => {
-                e.preventDefault();
-                active = true;
-                updateJoystick(e);
-            };
-            
-            const endJoystick = () => {
-                active = false;
-                joystickEl.style.transform = 'translate(0, 0)';
-                
-                // Clear all joystick inputs
-                if (gameQ && gameQ.inputs) {
-                    gameQ.inputs['left'] = false;
-                    gameQ.inputs['right'] = false;
-                    gameQ.inputs['up'] = false;
-                    gameQ.inputs['down'] = false;
-                }
-            };
-            
-            container.addEventListener('mousedown', startJoystick);
-            container.addEventListener('touchstart', (e) => startJoystick(e.touches[0]));
-            
-            window.addEventListener('mousemove', updateJoystick);
-            window.addEventListener('touchmove', (e) => updateJoystick(e.touches[0]));
-            
-            window.addEventListener('mouseup', endJoystick);
-            window.addEventListener('touchend', endJoystick);
-        }
-        
-        // Button controls
-        function setupButtons() {
-            const setupButton = (id, action) => {
-                const btn = document.getElementById(id);
-                if (!btn) return;
-                
-                const press = (e) => {
-                    e.preventDefault();
-                    if (gameQ && gameQ.inputs) {
-                        gameQ.inputs[action] = true;
-                    }
-                };
-                
-                const release = (e) => {
-                    e.preventDefault();
-                    if (gameQ && gameQ.inputs) {
-                        gameQ.inputs[action] = false;
-                    }
-                };
-                
-                btn.addEventListener('mousedown', press);
-                btn.addEventListener('touchstart', press);
-                btn.addEventListener('mouseup', release);
-                btn.addEventListener('touchend', release);
-                btn.addEventListener('mouseleave', release);
-            };
-            
-            // Map buttons to game actions
-            setupButton('jumpBtn', 'fire');  // Space/Z key in original
-            setupButton('yarnBtn', 'action'); // X key for throwing yarn
-            
-            // Start button
-            document.getElementById('startBtn').addEventListener('click', (e) => {
+
+        const startJoystick = (e) => {
+            e.preventDefault();
+            active = true;
+            updateJoystick(e);
+        };
+
+        const endJoystick = () => {
+            active = false;
+            joystickEl.style.transform = 'translate(0, 0)';
+            if (gameQ && gameQ.inputs) {
+                gameQ.inputs['left'] = false;
+                gameQ.inputs['right'] = false;
+                gameQ.inputs['up'] = false;
+                gameQ.inputs['down'] = false;
+            }
+        };
+
+        container.addEventListener('mousedown', startJoystick);
+        container.addEventListener('touchstart', startJoystick);
+
+        window.addEventListener('mousemove', updateJoystick);
+        window.addEventListener('touchmove', updateJoystick);
+
+        window.addEventListener('mouseup', endJoystick);
+        window.addEventListener('touchend', endJoystick);
+    }
+
+    function setupButtons() {
+        const setupButton = (id, action) => {
+            const btn = document.getElementById(id);
+            if (!btn) return;
+
+            const press = (e) => {
                 e.preventDefault();
                 if (gameQ && gameQ.inputs) {
-                    gameQ.inputs['confirm'] = true;
-                    setTimeout(() => { gameQ.inputs['confirm'] = false; }, 100);
+                    gameQ.inputs[action] = true;
                 }
-            });
-            
-            // Pause button - Special handling
-            document.getElementById('pauseBtn').addEventListener('click', (e) => {
+            };
+
+            const release = (e) => {
                 e.preventDefault();
-                if (gameQ) {
-                    if (gameQ.stage && gameQ.stage(0)) {
-                        if (gameQ.stage(0).paused) {
-                            gameQ.stage(0).unpause();
-                        } else {
-                            gameQ.stage(0).pause();
-                        }
-                    }
+                if (gameQ && gameQ.inputs) {
+                    gameQ.inputs[action] = false;
                 }
-            });
-        }
-        
-        // Setup all controls
-        function setupControls() {
-            setupJoystick();
-            setupButtons();
-            
-            // Also map keyboard controls to arcade buttons for desktop testing
-            window.addEventListener('keydown', (e) => {
-                if (!gameQ || !gameQ.inputs) return;
-                
-                switch(e.key) {
-                    case 'ArrowLeft':
-                    case 'a':
-                    case 'A':
-                        gameQ.inputs['left'] = true;
-                        break;
-                    case 'ArrowRight':
-                    case 'd':
-                    case 'D':
-                        gameQ.inputs['right'] = true;
-                        break;
-                    case 'ArrowUp':
-                    case 'w':
-                    case 'W':
-                        gameQ.inputs['up'] = true;
-                        break;
-                    case 'ArrowDown':
-                    case 's':
-                    case 'S':
-                        gameQ.inputs['down'] = true;
-                        break;
-                    case ' ':
-                    case 'z':
-                    case 'Z':
-                        gameQ.inputs['fire'] = true;
-                        break;
-                    case 'x':
-                    case 'X':
-                        gameQ.inputs['action'] = true;
-                        break;
-                    case 'Enter':
-                        gameQ.inputs['confirm'] = true;
-                        break;
+            };
+
+            btn.addEventListener('mousedown', press);
+            btn.addEventListener('touchstart', press);
+            btn.addEventListener('mouseup', release);
+            btn.addEventListener('touchend', release);
+            btn.addEventListener('mouseleave', release);
+        };
+
+        setupButton('jumpBtn', 'fire');
+
+        document.getElementById('startBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (gameQ && gameQ.inputs) {
+                gameQ.inputs['confirm'] = true;
+                setTimeout(() => { gameQ.inputs['confirm'] = false; }, 100);
+            }
+        });
+
+        document.getElementById('pauseBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (gameQ && gameQ.stage && gameQ.stage(0)) {
+                const stage = gameQ.stage(0);
+                if (stage.paused) {
+                    stage.unpause();
+                } else {
+                    stage.pause();
                 }
-            });
-            
-            window.addEventListener('keyup', (e) => {
-                if (!gameQ || !gameQ.inputs) return;
-                
-                switch(e.key) {
-                    case 'ArrowLeft':
-                    case 'a':
-                    case 'A':
-                        gameQ.inputs['left'] = false;
-                        break;
-                    case 'ArrowRight':
-                    case 'd':
-                    case 'D':
-                        gameQ.inputs['right'] = false;
-                        break;
-                    case 'ArrowUp':
-                    case 'w':
-                    case 'W':
-                        gameQ.inputs['up'] = false;
-                        break;
-                    case 'ArrowDown':
-                    case 's':
-                    case 'S':
-                        gameQ.inputs['down'] = false;
-                        break;
-                    case ' ':
-                    case 'z':
-                    case 'Z':
-                        gameQ.inputs['fire'] = false;
-                        break;
-                    case 'x':
-                    case 'X':
-                        gameQ.inputs['action'] = false;
-                        break;
-                    case 'Enter':
-                        gameQ.inputs['confirm'] = false;
-                        break;
-                }
-            });
-        }
-        
-        // Initialize controls immediately for keyboard
+            }
+        });
+    }
+
+    function setupControls() {
         setupJoystick();
         setupButtons();
-        
-        // Update HUD display
-        setInterval(() => {
-            if (gameQ && gameQ.state) {
-                const hud = document.getElementById('hudDisplay');
-                const coins = gameQ.state.get('coins') || 0;
-                hud.textContent = `COINS: ${coins}`;
+
+        window.addEventListener('keydown', (e) => {
+            if (!gameQ || !gameQ.inputs) return;
+            switch (e.key) {
+                case 'ArrowLeft': case 'a': case 'A': gameQ.inputs['left'] = true; break;
+                case 'ArrowRight': case 'd': case 'D': gameQ.inputs['right'] = true; break;
+                case 'ArrowUp': case 'w': case 'W': gameQ.inputs['up'] = true; break;
+                case 'ArrowDown': case 's': case 'S': gameQ.inputs['down'] = true; break;
+                case ' ': case 'z': case 'Z': gameQ.inputs['fire'] = true; break;
+                case 'x': case 'X': gameQ.inputs['action'] = true; break;
+                case 'Enter': gameQ.inputs['confirm'] = true; break;
             }
-        }, 100);
-    </script>
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (!gameQ || !gameQ.inputs) return;
+            switch (e.key) {
+                case 'ArrowLeft': case 'a': case 'A': gameQ.inputs['left'] = false; break;
+                case 'ArrowRight': case 'd': case 'D': gameQ.inputs['right'] = false; break;
+                case 'ArrowUp': case 'w': case 'W': gameQ.inputs['up'] = false; break;
+                case 'ArrowDown': case 's': case 'S': gameQ.inputs['down'] = false; break;
+                case ' ': case 'z': case 'Z': gameQ.inputs['fire'] = false; break;
+                case 'x': case 'X': gameQ.inputs['action'] = false; break;
+                case 'Enter': gameQ.inputs['confirm'] = false; break;
+            }
+        });
+    }
+
+    setupJoystick();
+    setupButtons();
+
+    setInterval(() => {
+        if (gameQ && gameQ.state) {
+            const hud = document.getElementById('hudDisplay');
+            const coins = gameQ.state.get('coins') || 0;
+            hud.textContent = `COINS: ${coins}`;
+        }
+    }, 100);
+</script>
 </body>
 </html>
