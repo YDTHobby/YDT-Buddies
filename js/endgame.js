@@ -1,6 +1,6 @@
 function loadEndGame(Q) {
     /**
-     * Escena que representa a la pantalla fin de partida.
+     * Scene representing the end of game screen.
      */
     Q.scene('endGame', function(stage) {
         var container = stage.insert(new Q.UI.Container({
