@@ -7,18 +7,11 @@
   <link rel="stylesheet" href="css/arcade-style.css">
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      image-rendering: pixelated;
-      image-rendering: -moz-crisp-edges;
-      image-rendering: crisp-edges;
-    }
-
     html, body {
       width: 100%;
       height: 100%;
+      margin: 0;
+      padding: 0;
       overflow: hidden;
       font-family: 'Courier New', monospace;
       background: #1a1a1a;
@@ -30,25 +23,24 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      overflow: hidden;
     }
 
     #arcadeMachine {
-      position: relative;
-      width: 90vw;
+      width: 95vw;
       max-width: 500px;
       aspect-ratio: 10 / 18;
-      background: linear-gradient(180deg, var(--cabinet-primary), var(--cabinet-secondary));
-      border-radius: 20px 20px 10px 10px;
-      box-shadow:
-        0 0 50px rgba(0,0,0,0.8),
-        inset 0 0 20px rgba(255,255,255,0.1);
-      padding: 20px;
-      padding-top: 40px;
+    }
+
+    @media (max-width: 600px), (max-height: 700px) {
+      #arcadeMachine {
+        width: 95vw;
+        max-width: 400px;
+        height: auto;
+      }
     }
   </style>
 
-  <!-- Game and Framework Scripts -->
+  <!-- Game Scripts -->
   <script src="js/arcade-detection.js"></script>
   <script src="lib/quintus.js"></script>
   <script src="lib/quintus_input.js"></script>
@@ -74,118 +66,118 @@
 </head>
 
 <body>
-<div id="arcadeWrapper">
-  <div id="arcadeMachine">
-    <div class="side-speaker left"></div>
-    <div class="side-speaker right"></div>
-    <div class="coin-slot"></div>
-    <div class="instructions">Touch joystick to move. Press Jump to fly!</div>
+  <div id="arcadeWrapper">
+    <div id="arcadeMachine">
+      <div class="side-speaker left"></div>
+      <div class="side-speaker right"></div>
+      <div class="coin-slot"></div>
+      <div class="instructions">Touch joystick to move. Press Jump to fly!</div>
 
-    <div id="marquee" class="arcade-text arcade-glow">
-      <h1>YDT BARNYARD BUDDIES</h1>
-    </div>
+      <div id="marquee" class="arcade-text arcade-glow">
+        <h1>YDT BARNYARD BUDDIES</h1>
+      </div>
 
-    <div id="screenBezel" class="crt-flicker">
-      <div id="screenContainer">
-        <div id="hudDisplay" class="high-score-display">COINS: 0</div>
-        <canvas id="gameFrame" width="320" height="480"></canvas>
-        <div class="scanlines"></div>
+      <div id="screenBezel" class="crt-flicker">
+        <div id="screenContainer">
+          <div id="hudDisplay" class="high-score-display">COINS: 0</div>
+          <canvas id="gameFrame" width="320" height="480"></canvas>
+          <div class="scanlines"></div>
+        </div>
       </div>
-    </div>
 
-    <div id="controlPanel">
-      <div class="joystick-container">
-        <div class="joystick" id="joystick"></div>
-      </div>
-      <div class="button-row">
-        <button class="arcadeButton red" id="jumpBtn">Jump</button>
-      </div>
-      <div class="button-row">
-        <button class="arcadeButton small green" id="startBtn">Start</button>
-        <button class="arcadeButton small blue" id="pauseBtn">Pause</button>
+      <div id="controlPanel">
+        <div class="joystick-container">
+          <div class="joystick" id="joystick"></div>
+        </div>
+        <div class="button-row">
+          <button class="arcadeButton red" id="jumpBtn"></button>
+        </div>
+        <div class="button-row">
+          <button class="arcadeButton small green" id="startBtn"></button>
+          <button class="arcadeButton small blue" id="pauseBtn"></button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<script>
-  const gameWindow = window;
+  <script>
+    const gameWindow = window;
 
-  function simulateKey(key, isDown) {
-    const event = new KeyboardEvent(isDown ? 'keydown' : 'keyup', {
-      key,
-      bubbles: true
+    function simulateKey(key, isDown) {
+      const event = new KeyboardEvent(isDown ? 'keydown' : 'keyup', {
+        key,
+        bubbles: true
+      });
+      document.dispatchEvent(event);
+    }
+
+    function setupJoystick() {
+      const joystickEl = document.getElementById('joystick');
+      const container = joystickEl.parentElement;
+      let active = false, lastLeft = false, lastRight = false;
+
+      const updateJoystick = (e) => {
+        if (!active) return;
+        const rect = container.getBoundingClientRect();
+        const x = (e.touches ? e.touches[0].clientX : e.clientX) - (rect.left + rect.width / 2);
+        const moveX = Math.max(-rect.width/2 + 25, Math.min(rect.width/2 - 25, x));
+        joystickEl.style.transform = `translate(${moveX}px, 0)`;
+
+        const left = moveX < -10, right = moveX > 10;
+        if (left !== lastLeft) simulateKey('ArrowLeft', left), lastLeft = left;
+        if (right !== lastRight) simulateKey('ArrowRight', right), lastRight = right;
+      };
+
+      const start = (e) => { e.preventDefault(); active = true; updateJoystick(e); };
+      const end = () => {
+        active = false;
+        joystickEl.style.transform = 'translate(0, 0)';
+        simulateKey('ArrowLeft', false);
+        simulateKey('ArrowRight', false);
+        lastLeft = lastRight = false;
+      };
+
+      container.addEventListener('mousedown', start);
+      container.addEventListener('touchstart', start);
+      window.addEventListener('mousemove', updateJoystick);
+      window.addEventListener('touchmove', updateJoystick);
+      window.addEventListener('mouseup', end);
+      window.addEventListener('touchend', end);
+    }
+
+    function setupButton(id, key) {
+      const btn = document.getElementById(id);
+      if (!btn) return;
+      const press = e => { e.preventDefault(); simulateKey(key, true); };
+      const release = e => { e.preventDefault(); simulateKey(key, false); };
+
+      btn.addEventListener('mousedown', press);
+      btn.addEventListener('touchstart', press);
+      btn.addEventListener('mouseup', release);
+      btn.addEventListener('touchend', release);
+      btn.addEventListener('mouseleave', release);
+    }
+
+    function setupControls() {
+      setupJoystick();
+      setupButton('jumpBtn', 'ArrowUp');
+      setupButton('startBtn', 'Enter');
+      setupButton('pauseBtn', 'Escape');
+    }
+
+    window.addEventListener('load', () => {
+      setupControls();
     });
-    document.dispatchEvent(event);
-  }
 
-  function setupJoystick() {
-    const joystickEl = document.getElementById('joystick');
-    const container = joystickEl.parentElement;
-    let active = false, lastLeft = false, lastRight = false;
-
-    const updateJoystick = (e) => {
-      if (!active) return;
-      const rect = container.getBoundingClientRect();
-      const x = (e.touches ? e.touches[0].clientX : e.clientX) - (rect.left + rect.width / 2);
-      const moveX = Math.max(-rect.width/2 + 25, Math.min(rect.width/2 - 25, x));
-      joystickEl.style.transform = `translate(${moveX}px, 0)`;
-
-      const left = moveX < -10, right = moveX > 10;
-      if (left !== lastLeft) simulateKey('ArrowLeft', left), lastLeft = left;
-      if (right !== lastRight) simulateKey('ArrowRight', right), lastRight = right;
-    };
-
-    const start = (e) => { e.preventDefault(); active = true; updateJoystick(e); };
-    const end = () => {
-      active = false;
-      joystickEl.style.transform = 'translate(0, 0)';
-      simulateKey('ArrowLeft', false);
-      simulateKey('ArrowRight', false);
-      lastLeft = lastRight = false;
-    };
-
-    container.addEventListener('mousedown', start);
-    container.addEventListener('touchstart', start);
-    window.addEventListener('mousemove', updateJoystick);
-    window.addEventListener('touchmove', updateJoystick);
-    window.addEventListener('mouseup', end);
-    window.addEventListener('touchend', end);
-  }
-
-  function setupButton(id, key) {
-    const btn = document.getElementById(id);
-    if (!btn) return;
-    const press = e => { e.preventDefault(); simulateKey(key, true); };
-    const release = e => { e.preventDefault(); simulateKey(key, false); };
-
-    btn.addEventListener('mousedown', press);
-    btn.addEventListener('touchstart', press);
-    btn.addEventListener('mouseup', release);
-    btn.addEventListener('touchend', release);
-    btn.addEventListener('mouseleave', release);
-  }
-
-  function setupControls() {
-    setupJoystick();
-    setupButton('jumpBtn', 'ArrowUp');
-    setupButton('startBtn', 'Enter');
-    setupButton('pauseBtn', 'Escape');
-  }
-
-  window.addEventListener('load', () => {
-    setupControls();
-  });
-
-  setInterval(() => {
-    try {
-      if (window.Q && Q.state) {
-        const hud = document.getElementById('hudDisplay');
-        const coins = Q.state.get('coins') || 0;
-        hud.textContent = `COINS: ${coins}`;
-      }
-    } catch (e) {}
-  }, 100);
-</script>
+    setInterval(() => {
+      try {
+        if (window.Q && Q.state) {
+          const hud = document.getElementById('hudDisplay');
+          const coins = Q.state.get('coins') || 0;
+          hud.textContent = `COINS: ${coins}`;
+        }
+      } catch (e) {}
+    }, 100);
+  </script>
 </body>
 </html>
