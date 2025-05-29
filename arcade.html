@@ -310,135 +310,124 @@
         </div>
     </div>
     
-  <script>
-    const gameFrame = document.getElementById('gameFrame');
-    let gameWindow = null;
-    let gameQ = null;
+<script>
+  const gameFrame = document.getElementById('gameFrame');
+  let gameWindow = null;
 
-    gameFrame.onload = function () {
-      gameWindow = gameFrame.contentWindow;
+  gameFrame.onload = function () {
+    gameWindow = gameFrame.contentWindow;
+    setTimeout(() => {
+      setupControls();
+    }, 1000);
+  };
 
-      setTimeout(() => {
-        if (gameWindow.Q) {
-          gameQ = gameWindow.Q;
-          setupControls();
-        }
-      }, 1000);
+  function simulateKey(key, isDown) {
+    if (!gameWindow) return;
+    const event = new KeyboardEvent(isDown ? 'keydown' : 'keyup', {
+      key,
+      bubbles: true
+    });
+    gameWindow.document.dispatchEvent(event);
+  }
+
+  function setupJoystick() {
+    const joystickEl = document.getElementById('joystick');
+    const container = joystickEl.parentElement;
+    let active = false;
+    let lastLeft = false;
+    let lastRight = false;
+
+    const updateJoystick = (e) => {
+      if (!active) return;
+
+      const rect = container.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+
+      const x = clientX - centerX;
+      const distance = Math.abs(x);
+      const maxDistance = rect.width / 2 - 25;
+      const moveX = Math.max(-maxDistance, Math.min(maxDistance, x));
+
+      joystickEl.style.transform = `translate(${moveX}px, 0)`;
+
+      const goingLeft = moveX < -10;
+      const goingRight = moveX > 10;
+
+      if (goingLeft !== lastLeft) {
+        simulateKey('ArrowLeft', goingLeft);
+        lastLeft = goingLeft;
+      }
+
+      if (goingRight !== lastRight) {
+        simulateKey('ArrowRight', goingRight);
+        lastRight = goingRight;
+      }
     };
 
-    function simulateKey(key, isDown) {
-      const event = new KeyboardEvent(isDown ? 'keydown' : 'keyup', {
-        key,
-        bubbles: true
-      });
-      window.dispatchEvent(event);
-    }
+    const startJoystick = (e) => {
+      e.preventDefault();
+      active = true;
+      updateJoystick(e);
+    };
 
-    function setupJoystick() {
-      const joystickEl = document.getElementById('joystick');
-      const container = joystickEl.parentElement;
-      let active = false;
-      let lastLeft = false;
-      let lastRight = false;
+    const endJoystick = () => {
+      active = false;
+      joystickEl.style.transform = 'translate(0, 0)';
+      simulateKey('ArrowLeft', false);
+      simulateKey('ArrowRight', false);
+      lastLeft = false;
+      lastRight = false;
+    };
 
-      const updateJoystick = (e) => {
-        if (!active) return;
+    container.addEventListener('mousedown', startJoystick);
+    container.addEventListener('touchstart', startJoystick);
+    window.addEventListener('mousemove', updateJoystick);
+    window.addEventListener('touchmove', updateJoystick);
+    window.addEventListener('mouseup', endJoystick);
+    window.addEventListener('touchend', endJoystick);
+  }
 
-        const rect = container.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
+  function setupButton(id, key) {
+    const btn = document.getElementById(id);
+    if (!btn) return;
 
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const press = (e) => {
+      e.preventDefault();
+      simulateKey(key, true);
+    };
 
-        const x = clientX - centerX;
-        const y = clientY - centerY;
+    const release = (e) => {
+      e.preventDefault();
+      simulateKey(key, false);
+    };
 
-        const distance = Math.sqrt(x * x + y * y);
-        const maxDistance = rect.width / 2 - 25;
+    btn.addEventListener('mousedown', press);
+    btn.addEventListener('touchstart', press);
+    btn.addEventListener('mouseup', release);
+    btn.addEventListener('touchend', release);
+    btn.addEventListener('mouseleave', release);
+  }
 
-        let moveX = x;
-        if (distance > maxDistance) {
-          const angle = Math.atan2(y, x);
-          moveX = Math.cos(angle) * maxDistance;
-        }
+  function setupControls() {
+    setupJoystick();
+    setupButton('jumpBtn', 'ArrowUp');
+    setupButton('startBtn', 'Enter');
+    setupButton('pauseBtn', 'Escape');
+  }
 
-        joystickEl.style.transform = `translate(${moveX}px, 0)`;
-
-        const goingLeft = moveX < -10;
-        const goingRight = moveX > 10;
-
-        if (goingLeft !== lastLeft) {
-          simulateKey('ArrowLeft', goingLeft);
-          lastLeft = goingLeft;
-        }
-
-        if (goingRight !== lastRight) {
-          simulateKey('ArrowRight', goingRight);
-          lastRight = goingRight;
-        }
-      };
-
-      const startJoystick = (e) => {
-        e.preventDefault();
-        active = true;
-        updateJoystick(e);
-      };
-
-      const endJoystick = () => {
-        active = false;
-        joystickEl.style.transform = 'translate(0, 0)';
-        simulateKey('ArrowLeft', false);
-        simulateKey('ArrowRight', false);
-        lastLeft = false;
-        lastRight = false;
-      };
-
-      container.addEventListener('mousedown', startJoystick);
-      container.addEventListener('touchstart', startJoystick);
-
-      window.addEventListener('mousemove', updateJoystick);
-      window.addEventListener('touchmove', updateJoystick);
-
-      window.addEventListener('mouseup', endJoystick);
-      window.addEventListener('touchend', endJoystick);
-    }
-
-    function setupButton(id, key) {
-      const btn = document.getElementById(id);
-      if (!btn) return;
-
-      const press = (e) => {
-        e.preventDefault();
-        simulateKey(key, true);
-      };
-
-      const release = (e) => {
-        e.preventDefault();
-        simulateKey(key, false);
-      };
-
-      btn.addEventListener('mousedown', press);
-      btn.addEventListener('touchstart', press);
-      btn.addEventListener('mouseup', release);
-      btn.addEventListener('touchend', release);
-      btn.addEventListener('mouseleave', release);
-    }
-
-    function setupControls() {
-      setupJoystick();
-      setupButton('jumpBtn', 'ArrowUp');
-      setupButton('startBtn', 'Enter');
-      setupButton('pauseBtn', 'Escape');
-    }
-
-    setInterval(() => {
-      if (gameQ && gameQ.state) {
+  setInterval(() => {
+    try {
+      if (gameWindow && gameWindow.Q && gameWindow.Q.state) {
         const hud = document.getElementById('hudDisplay');
-        const coins = gameQ.state.get('coins') || 0;
+        const coins = gameWindow.Q.state.get('coins') || 0;
         hud.textContent = `COINS: ${coins}`;
       }
-    }, 100);
-  </script>
+    } catch (e) {
+      // Catch possible cross-origin issues (if any)
+    }
+  }, 100);
+</script>
+
 </body>
 </html>
