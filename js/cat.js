@@ -1,27 +1,27 @@
 function loadCat(Q) {
 
-    Q.animations('Cat animation', {
+    Q.animations('cat animation', {
         'live': { frames: [0, 1], rate: 1 / 2 },
         'die': { frames: [2], loop: false }
     });
     /**
-     * Class that represents the Cat enemy.
+     * Class that represents the cat enemy.
      */
-    Q.Sprite.extend('Cat', {
+    Q.Sprite.extend('cat', {
         init: function(p) {
             this._super(p, {
-                sprite: 'Cat animation',
+                sprite: 'cat animation',
                 /**
-                 * Cat's Sprite.
+                 * cat's Sprite.
                  */
-                sheet: 'Cat',
+                sheet: 'cat',
                 /**
-                 * Posición inicial del Cat.
+                 * Posición inicial del cat.
                  */
                 x: 1190,
                 y: 500,
                 /**
-                 * Cat. Starting Position
+                 * cat. Starting Position
                  */
                 gravity: 0,
                 /**
@@ -41,13 +41,13 @@ function loadCat(Q) {
             this.on('die');
         },
         /**
-         * Cat dies.
+         * cat dies.
          */
         die: function() {
             this.p.die = true;
             this.p.vy = 70;
             setTimeout(function() {
-                Q('Cat').destroy();
+                Q('cat').destroy();
             }, 200);
         },
 
@@ -65,13 +65,13 @@ function loadCat(Q) {
                     this.p.time_jump = 0;
                 }
                 /**
-                 * We indicate the time at which the Cat descends.
+                 * We indicate the time at which the cat descends.
                  */
                 if (this.p.time_jump >= 1.5) {
                     this.p.vy = 70;
                 }
                 /**
-                 * If Cat falls off the stage, they dies.
+                 * If cat falls off the stage, they dies.
                  */
                 if (this.p.y > fondo_escenario) {
                     this.trigger('die');
