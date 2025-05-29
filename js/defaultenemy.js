@@ -4,16 +4,16 @@ function loadDefaultEnemy(Q) {
             this.entity.add('2d, animation');
 
             /**
-             * Definición de las funciones adicionales.
+             * Definition of additional functions.
              */
             this.entity.on('bump.top', this, 'top');
             this.entity.on('bump.left, bump.right, bump.bottom', this, 'collision');
         },
         /**
-         * En caso de que Mario salte encima de él, el Bloopa muere.
+         * If Nugget jumps on Cat, the Cat dies.
          */
         top: function(collision) {
-            if (collision.obj.isA('Mario')) {
+            if (collision.obj.isA('Nugget')) {
                 if(!this.entity.p.collision){
                     this.entity.trigger('die');
                     collision.obj.p.vy = -300;
@@ -23,10 +23,10 @@ function loadDefaultEnemy(Q) {
             }
         },
         /**
-         * En caso de que Mario choque contra él, Mario muere.
+         * If Nugget crashes into Cat, Nugget dies.
          */
         collision: function(collision) {
-            if (collision.obj.isA('Mario')) {
+            if (collision.obj.isA('Nugget')) {
                 if(!this.entity.p.collision){
                     collision.obj.trigger('die');
                     this.entity.p.collision = true;
