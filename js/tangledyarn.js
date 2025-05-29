@@ -1,47 +1,47 @@
-function loadGoomba(Q) {
+function loadTangledyarn(Q) {
     
-    Q.animations('goomba animation', {
+    Q.animations('tangledyarn animation', {
         'live': { frames: [0, 1], rate: 1 / 5 },
         'die': { frames: [2], loop: false }
     });
     /**
-     * Clase que representa al enemigo Goomba.
+     * Class that represents the enemy tangledyarn.
      */
-    Q.Sprite.extend('Goomba', {
+    Q.Sprite.extend('tangledyarn', {
         init: function(p) {
             this._super(p, {
-                sprite: 'goomba animation',
+                sprite: 'tangledyarn animation',
                 /**
-                 * Sprite del Goomba.
+                 * tangledyarn sprite.
                  */
-                sheet: 'goomba',
+                sheet: 'tangledyarn',
                 /**
-                 * Posición inicial del Goomba.
+                 * Posición inicial del tangledyarn.
                  */
                 x: 1660,
                 y: 500,
                 /**
-                 * Parámetros de velocidad del Goomba.
+                 * tangledyarn's starting position.
                  */
                 speed: 170,
                 vx: 100,
                 /**
-                 * Atributos adicionales.
+                 * Additional attributes.
                  */
                 die: false,
                 collision: false
             });
             /**
-             * Los módulos Quintus necesarios.
+             * The necessary Quintus modules.
              */
             this.add('aiBounce, defaultEnemy');
             /**
-             * Definición de las funciones adicionales.
+             * Definition of additional functions.
              */
             this.on('die');
         },
         /**
-         * Muere el Goomba.
+         * The tangledyarn dies.
          */
         die: function() {
             this.p.die = true;
@@ -49,11 +49,11 @@ function loadGoomba(Q) {
             this.p.vx = 0;
 
             setTimeout(function() {
-                Q('Goomba').destroy();
+                Q('tangledyarn').destroy();
             }, 200);
         },
         /**
-         * Ejecuta un paso de Goomba.
+         * Execute a tangledyarn step.
          */
         step: function(dt) {
             if (this.p.die) {
@@ -61,7 +61,7 @@ function loadGoomba(Q) {
             } else {
                 this.play('live');
                 /**
-                 * En caso de caerse del escenario, Goomba muere.
+                 * If tangledyarn falls off the stage, he dies.
                  */
                 if (this.p.y > fondo_escenario) {
                     this.trigger('die');
