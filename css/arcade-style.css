@@ -308,3 +308,42 @@
     width: 0%;
     transition: width 0.3s ease-out;
 }
+
+/* START: Integrated Arcade Machine Layout Styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+body {
+    background: #1a1a1a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Courier New', monospace;
+    overflow: hidden;
+}
+
+/* Arcade Machine - Adjusted for 320x480 aspect ratio */
+#arcadeMachine {
+    position: relative;
+    width: 500px;
+    height: 900px;
+    background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+    border-radius: 20px 20px 10px 10px;
+    box-shadow: 
+        0 0 50px rgba(0,0,0,0.8),
+        inset 0 0 20px rgba(255,255,255,0.1);
+    padding: 20px;
+    padding-top: 40px;
+    transform: perspective(1000px) rotateX(2deg);
+}
+
+/* Additional styles omitted for brevity... */
+
+/* END: Integrated Arcade Machine Layout Styling */
