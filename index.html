@@ -167,21 +167,28 @@
   </script>
 
   <!-- Perfect-Fit Scaling -->
+  <!-- Perfect-Fit Scaling (including marquee) -->
   <script>
-function scaleArcade() {
-  const wrap = document.getElementById('arcadeWrapper');
-  const W = window.innerWidth;
-  const H = window.innerHeight;
-  // compute the fit ratio...
-  const ratio = Math.min(W/500, H/900);
-  // ...but never go above 1
-  const scale = Math.min(ratio, 1);
-  wrap.style.transform = `scale(${scale})`;
-}
+    function scaleArcade() {
+      const wrap = document.getElementById('arcadeWrapper');
+      const W = window.innerWidth;
+      const H = window.innerHeight;
 
-window.addEventListener('resize', scaleArcade);
-window.addEventListener('load',   scaleArcade);
+      // your cabinet is 500×900, but your marquee sits 80px above it
+      const MACHINE_W    = 500;
+      const MACHINE_H    = 900;
+      const MARQUEE_TOP  =  80;   // px the marquee extends above the top of the machine
 
+      // compute how much we can scale to fit both width AND the extra marquee height
+      const ratioW = W / MACHINE_W;
+      const ratioH = H / (MACHINE_H + MARQUEE_TOP);
+      const scale  = Math.min(ratioW, ratioH, 1);  // never scale above 1
+
+      wrap.style.transform = `scale(${scale})`;
+    }
+
+    window.addEventListener('resize', scaleArcade);
+    window.addEventListener('load',   scaleArcade);
   </script>
 </body>
 </html>
