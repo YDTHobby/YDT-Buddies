@@ -1,9 +1,9 @@
 // Detect if game is running inside arcade machine
 (function() {
-    // Check if we're in an iframe
-    if (window.parent !== window) {
-        // Add class to body for arcade-specific styling
-        document.body.classList.add('in-arcade');
+    window.addEventListener('load', function() {
+        if (window.parent !== window) {
+            const body = document.body;
+            if (body) body.classList.add('in-arcade');
         
         // Expose Q object to parent window for arcade controls
         window.addEventListener('load', function() {
@@ -38,9 +38,10 @@
                     // Update game inputs based on arcade controls
                     if (event.data.input) {
                         window.Q.inputs[event.data.input] = event.data.state;
-                    }
-                }
-            }
+        }
+    });
+})();
+
         });
     }
 })();
