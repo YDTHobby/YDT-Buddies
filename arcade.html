@@ -311,187 +311,163 @@
     </div>
     
     <script>
-        // Get the game iframe
+  <script>
     const gameFrame = document.getElementById('gameFrame');
     let gameWindow = null;
     let gameQ = null;
 
     gameFrame.onload = function () {
-        gameWindow = gameFrame.contentWindow;
+      gameWindow = gameFrame.contentWindow;
 
-        setTimeout(() => {
-            if (gameWindow.Q) {
-                gameQ = gameWindow.Q;
-                console.log('Connected to game!');
-                setupControls();
-            }
-        }, 1000);
+      setTimeout(() => {
+        if (gameWindow.Q) {
+          gameQ = gameWindow.Q;
+          console.log('Connected to game!');
+          setupControls();
+        }
+      }, 1000);
     };
 
     function setupJoystick() {
-        const joystickEl = document.getElementById('joystick');
-        const container = joystickEl.parentElement;
-        let active = false;
-        let centerX = 0;
-        let centerY = 0;
+      const joystickEl = document.getElementById('joystick');
+      const container = joystickEl.parentElement;
+      let active = false;
+      let centerX = 0;
+      let centerY = 0;
 
-        const updateJoystick = (e) => {
-            if (!active) return;
+      const updateJoystick = (e) => {
+        if (!active) return;
 
-            const rect = container.getBoundingClientRect();
-            centerX = rect.left + rect.width / 2;
-            centerY = rect.top + rect.height / 2;
+        const rect = container.getBoundingClientRect();
+        centerX = rect.left + rect.width / 2;
+        centerY = rect.top + rect.height / 2;
 
-            const x = (e.clientX || e.touches?.[0]?.clientX || 0) - centerX;
-            const y = (e.clientY || e.touches?.[0]?.clientY || 0) - centerY;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 
-            const distance = Math.sqrt(x * x + y * y);
-            const maxDistance = rect.width / 2 - 25;
+        const x = clientX - centerX;
+        const y = clientY - centerY;
 
-            let moveX = x;
-            let moveY = y;
+        const distance = Math.sqrt(x * x + y * y);
+        const maxDistance = rect.width / 2 - 25;
 
-            if (distance > maxDistance) {
-                const angle = Math.atan2(y, x);
-                moveX = Math.cos(angle) * maxDistance;
-                moveY = Math.sin(angle) * maxDistance;
-            }
+        let moveX = x;
+        let moveY = y;
 
-            joystickEl.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        if (distance > maxDistance) {
+          const angle = Math.atan2(y, x);
+          moveX = Math.cos(angle) * maxDistance;
+          moveY = Math.sin(angle) * maxDistance;
+        }
 
-            if (gameQ && gameQ.inputs) {
-                gameQ.inputs['left'] = false;
-                gameQ.inputs['right'] = false;
-                gameQ.inputs['up'] = false;
-                gameQ.inputs['down'] = false;
+        joystickEl.style.transform = `translate(${moveX}px, ${moveY}px)`;
 
-                if (Math.abs(moveX) > 10) {
-                    gameQ.inputs[moveX < 0 ? 'left' : 'right'] = true;
-                }
+        if (gameQ && gameQ.inputs) {
+          gameQ.inputs['left'] = false;
+          gameQ.inputs['right'] = false;
 
-                if (moveY < -10) {
-                    gameQ.inputs['up'] = true;
-                }
-            }
-        };
+          if (Math.abs(moveX) > 10) {
+            gameQ.inputs[moveX < 0 ? 'left' : 'right'] = true;
+          }
+        }
+      };
 
-        const startJoystick = (e) => {
-            e.preventDefault();
-            active = true;
-            updateJoystick(e);
-        };
+      const startJoystick = (e) => {
+        e.preventDefault();
+        active = true;
+        updateJoystick(e);
+      };
 
-        const endJoystick = () => {
-            active = false;
-            joystickEl.style.transform = 'translate(0, 0)';
-            if (gameQ && gameQ.inputs) {
-                gameQ.inputs['left'] = false;
-                gameQ.inputs['right'] = false;
-                gameQ.inputs['up'] = false;
-                gameQ.inputs['down'] = false;
-            }
-        };
+      const endJoystick = () => {
+        active = false;
+        joystickEl.style.transform = 'translate(0, 0)';
+        if (gameQ && gameQ.inputs) {
+          gameQ.inputs['left'] = false;
+          gameQ.inputs['right'] = false;
+        }
+      };
 
-        container.addEventListener('mousedown', startJoystick);
-        container.addEventListener('touchstart', startJoystick);
+      container.addEventListener('mousedown', startJoystick);
+      container.addEventListener('touchstart', startJoystick);
 
-        window.addEventListener('mousemove', updateJoystick);
-        window.addEventListener('touchmove', updateJoystick);
+      window.addEventListener('mousemove', updateJoystick);
+      window.addEventListener('touchmove', updateJoystick);
 
-        window.addEventListener('mouseup', endJoystick);
-        window.addEventListener('touchend', endJoystick);
+      window.addEventListener('mouseup', endJoystick);
+      window.addEventListener('touchend', endJoystick);
     }
 
     function setupButtons() {
-        const setupButton = (id, action) => {
-            const btn = document.getElementById(id);
-            if (!btn) return;
+      const setupButton = (id, action) => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
 
-            const press = (e) => {
-                e.preventDefault();
-                if (gameQ && gameQ.inputs) {
-                    gameQ.inputs[action] = true;
-                }
-            };
-
-            const release = (e) => {
-                e.preventDefault();
-                if (gameQ && gameQ.inputs) {
-                    gameQ.inputs[action] = false;
-                }
-            };
-
-            btn.addEventListener('mousedown', press);
-            btn.addEventListener('touchstart', press);
-            btn.addEventListener('mouseup', release);
-            btn.addEventListener('touchend', release);
-            btn.addEventListener('mouseleave', release);
+        const press = (e) => {
+          e.preventDefault();
+          if (gameQ && gameQ.inputs) {
+            gameQ.inputs[action] = true;
+          }
         };
 
-        setupButton('jumpBtn', 'fire');
+        const release = (e) => {
+          e.preventDefault();
+          if (gameQ && gameQ.inputs) {
+            gameQ.inputs[action] = false;
+          }
+        };
 
-        document.getElementById('startBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            if (gameQ && gameQ.inputs) {
-                gameQ.inputs['confirm'] = true;
-                setTimeout(() => { gameQ.inputs['confirm'] = false; }, 100);
-            }
-        });
+        btn.addEventListener('mousedown', press);
+        btn.addEventListener('touchstart', press);
+        btn.addEventListener('mouseup', release);
+        btn.addEventListener('touchend', release);
+        btn.addEventListener('mouseleave', release);
+      };
 
-        document.getElementById('pauseBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            if (gameQ && gameQ.stage && gameQ.stage(0)) {
-                const stage = gameQ.stage(0);
-                if (stage.paused) {
-                    stage.unpause();
-                } else {
-                    stage.pause();
-                }
-            }
-        });
+      setupButton('jumpBtn', 'fire');
+      setupButton('startBtn', 'confirm');
+      setupButton('pauseBtn', 'pause');
     }
 
     function setupControls() {
-        setupJoystick();
-        setupButtons();
+      setupJoystick();
+      setupButtons();
 
-        window.addEventListener('keydown', (e) => {
-            if (!gameQ || !gameQ.inputs) return;
-            switch (e.key) {
-                case 'ArrowLeft': case 'a': case 'A': gameQ.inputs['left'] = true; break;
-                case 'ArrowRight': case 'd': case 'D': gameQ.inputs['right'] = true; break;
-                case 'ArrowUp': case 'w': case 'W': gameQ.inputs['up'] = true; break;
-                case 'ArrowDown': case 's': case 'S': gameQ.inputs['down'] = true; break;
-                case ' ': case 'z': case 'Z': gameQ.inputs['fire'] = true; break;
-                case 'x': case 'X': gameQ.inputs['action'] = true; break;
-                case 'Enter': gameQ.inputs['confirm'] = true; break;
-            }
-        });
+      window.addEventListener('keydown', (e) => {
+        if (!gameQ || !gameQ.inputs) return;
+        switch (e.key) {
+          case 'ArrowLeft': case 'a': case 'A': gameQ.inputs['left'] = true; break;
+          case 'ArrowRight': case 'd': case 'D': gameQ.inputs['right'] = true; break;
+          case 'ArrowUp': case 'w': case 'W': gameQ.inputs['up'] = true; break;
+          case 'ArrowDown': case 's': case 'S': gameQ.inputs['down'] = true; break;
+          case ' ': case 'z': case 'Z': gameQ.inputs['fire'] = true; break;
+          case 'x': case 'X': gameQ.inputs['action'] = true; break;
+          case 'Enter': gameQ.inputs['confirm'] = true; break;
+          case 'Escape': gameQ.inputs['pause'] = true; break;
+        }
+      });
 
-        window.addEventListener('keyup', (e) => {
-            if (!gameQ || !gameQ.inputs) return;
-            switch (e.key) {
-                case 'ArrowLeft': case 'a': case 'A': gameQ.inputs['left'] = false; break;
-                case 'ArrowRight': case 'd': case 'D': gameQ.inputs['right'] = false; break;
-                case 'ArrowUp': case 'w': case 'W': gameQ.inputs['up'] = false; break;
-                case 'ArrowDown': case 's': case 'S': gameQ.inputs['down'] = false; break;
-                case ' ': case 'z': case 'Z': gameQ.inputs['fire'] = false; break;
-                case 'x': case 'X': gameQ.inputs['action'] = false; break;
-                case 'Enter': gameQ.inputs['confirm'] = false; break;
-            }
-        });
+      window.addEventListener('keyup', (e) => {
+        if (!gameQ || !gameQ.inputs) return;
+        switch (e.key) {
+          case 'ArrowLeft': case 'a': case 'A': gameQ.inputs['left'] = false; break;
+          case 'ArrowRight': case 'd': case 'D': gameQ.inputs['right'] = false; break;
+          case 'ArrowUp': case 'w': case 'W': gameQ.inputs['up'] = false; break;
+          case 'ArrowDown': case 's': case 'S': gameQ.inputs['down'] = false; break;
+          case ' ': case 'z': case 'Z': gameQ.inputs['fire'] = false; break;
+          case 'x': case 'X': gameQ.inputs['action'] = false; break;
+          case 'Enter': gameQ.inputs['confirm'] = false; break;
+          case 'Escape': gameQ.inputs['pause'] = false; break;
+        }
+      });
     }
 
-    setupJoystick();
-    setupButtons();
-
     setInterval(() => {
-        if (gameQ && gameQ.state) {
-            const hud = document.getElementById('hudDisplay');
-            const coins = gameQ.state.get('coins') || 0;
-            hud.textContent = `COINS: ${coins}`;
-        }
+      if (gameQ && gameQ.state) {
+        const hud = document.getElementById('hudDisplay');
+        const coins = gameQ.state.get('coins') || 0;
+        hud.textContent = `COINS: ${coins}`;
+      }
     }, 100);
-</script>
+  </script>
 </body>
 </html>
