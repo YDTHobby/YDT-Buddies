@@ -1,27 +1,27 @@
-function loadBloopa(Q) {
+function loadCat(Q) {
 
-    Q.animations('bloopa animation', {
+    Q.animations('Cat animation', {
         'live': { frames: [0, 1], rate: 1 / 2 },
         'die': { frames: [2], loop: false }
     });
     /**
-     * Clase que representa al enemigo Bloopa.
+     * Clase que representa al enemigo Cat.
      */
-    Q.Sprite.extend('Bloopa', {
+    Q.Sprite.extend('Cat', {
         init: function(p) {
             this._super(p, {
-                sprite: 'bloopa animation',
+                sprite: 'Cat animation',
                 /**
-                 * Sprite del Bloopa.
+                 * Sprite del Cat.
                  */
-                sheet: 'bloopa',
+                sheet: 'Cat',
                 /**
-                 * Posición inicial del Bloopa.
+                 * Posición inicial del Cat.
                  */
                 x: 1190,
                 y: 500,
                 /**
-                 * Parámetros de velocidad del Bloopa.
+                 * Parámetros de velocidad del Cat.
                  */
                 gravity: 0,
                 /**
@@ -41,13 +41,13 @@ function loadBloopa(Q) {
             this.on('die');
         },
         /**
-         * Muere el Bloopa.
+         * Muere el Cat.
          */
         die: function() {
             this.p.die = true;
             this.p.vy = 70;
             setTimeout(function() {
-                Q('Bloopa').destroy();
+                Q('Cat').destroy();
             }, 200);
         },
 
@@ -71,7 +71,7 @@ function loadBloopa(Q) {
                     this.p.vy = 70;
                 }
                 /**
-                 * En caso de caerse del escenario, Bloopa muere.
+                 * En caso de caerse del escenario, Cat muere.
                  */
                 if (this.p.y > fondo_escenario) {
                     this.trigger('die');
