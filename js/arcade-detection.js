@@ -8,15 +8,19 @@
         window.Q.arcadeMode = true;
 
         const originalInput = window.Q.input.keyboardControls;
-        window.Q.input.keyboardControls = function (keys) {
-          const arcadeKeys = keys || {};
-          arcadeKeys['SPACE'] = 'fire';
-          arcadeKeys['Z'] = 'fire';
-          arcadeKeys['X'] = 'action';
-          arcadeKeys['ENTER'] = 'confirm';
-          arcadeKeys['P'] = 'pause';
-          return originalInput.call(this, arcadeKeys);
-        };
+window.Q.input.keyboardControls = function (keys) {
+  const arcadeKeys = keys || {};
+  arcadeKeys['LEFT'] = 'left';
+  arcadeKeys['RIGHT'] = 'right';
+  arcadeKeys['SPACE'] = 'fire';
+  arcadeKeys['Z'] = 'fire';
+  arcadeKeys['X'] = 'action';
+  arcadeKeys['ENTER'] = 'confirm';
+  arcadeKeys['ESC'] = 'pause';
+  arcadeKeys['P'] = 'pause';
+  return originalInput.call(this, arcadeKeys);
+};
+
 
         if (window.parent.postMessage) {
           window.parent.postMessage({ type: 'quintus-ready' }, '*');
@@ -33,5 +37,13 @@
         }
       });
     }
+    // Sync arcade input states with Quintus input manager
+setInterval(() => {
+  if (window.Q && window.Q.inputs && window.Q.input && window.Q.input.keys) {
+    for (const [key, state] of Object.entries(window.Q.inputs)) {
+      window.Q.input.keys[key] = state;
+    }
+  }
+}, 100);
   });
 })();
