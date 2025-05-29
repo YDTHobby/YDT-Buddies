@@ -1,41 +1,41 @@
 /**
- * Indica el fondo del escenario.
+ * Indicates the background of the stage.
  * @type {Number}
  */
 var fondo_escenario = 580;
 
 window.addEventListener('load', function() {
     /**
-     * Variable principal del Quintus.
+     * Main variable of the Quintus.
      */
     var Q = Quintus({ audioSupported: ['mp3', 'ogg'] })
         /**
-         * Se añaden los módulos necesarios para el funcionamiento de
-         * la aplicación.
+         * The modules required for the application to function are added.
+         * the application.
          */
         .include('Sprites, Scenes, Input, 2D, Anim, Touch, UI, TMX, Audio')
         /**
-         * Se ajusta la ventana.
+         * The window is adjusted.
          */
         .setup({
             width: 320,
             height: 480
         })
         /**
-         * Se le añade funcionalidad.
+         * Functionality is added.
          */
         .controls().touch().enableSound();
     /**
-     * Cargamos los diversos componenentes que utilizaremos durante el juego.
+     * We load the various components that we will use during the game.
      */
-    loadMario(Q);
-    loadPrincessPeach(Q);
+    loadNugget(Q);
+    loadPrincessMabel(Q);
 
     loadDefaultEnemy(Q);
-    loadGoomba(Q);
-    loadBloopa(Q);
+    loadTangledyarn(Q);
+    loadCat(Q);
 
-    loadCoin(Q);
+    loadYarnball(Q);
 
     loadEndGame(Q);
     loadMainTitle(Q);
@@ -43,13 +43,13 @@ window.addEventListener('load', function() {
 
     loadLevel1(Q);
     /**
-     * Cargamos los ficheros que necesitamos para el juego.
+     * We load the files we need for the game.
      */
-    Q.loadTMX('level.tmx, mainTitle.png, mario_small.png, mario_small.json, goomba.png, goomba.json, bloopa.png, bloopa.json, princess.png, coin.png, coin.json, music_main.mp3, music_main.ogg, music_die.mp3, music_die.ogg, music_level_complete.mp3, music_level_complete.ogg, coin.mp3, coin.ogg', function() {
-        Q.compileSheets('mario_small.png', 'mario_small.json');
-        Q.compileSheets('goomba.png', 'goomba.json');
-        Q.compileSheets('bloopa.png', 'bloopa.json');
-        Q.compileSheets('coin.png', 'coin.json');
+    Q.loadTMX('level.tmx, mainTitle.png, nugget_small.png, nugget_small.json, tangledyarn.png, tangledyarn.json, cat.png, cat.json, princess.png, yarnball.png, yarnball.json, music_main.mp3, music_main.ogg, music_die.mp3, music_die.ogg, music_level_complete.mp3, music_level_complete.ogg, yarnball.mp3, yarnball.ogg', function() {
+        Q.compileSheets('nugget_small.png', 'nugget_small.json');
+        Q.compileSheets('tangledyarn.png', 'tangledyarn.json');
+        Q.compileSheets('cat.png', 'cat.json');
+        Q.compileSheets('yarnball.png', 'yarnball.json');
         Q.stageScene('mainTitle');
     });
 });
