@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>YDT Barnyard Buddies - Arcade Machine</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/arcade-style.css">
@@ -23,6 +24,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      transform-origin: top center;
     }
 
     #arcadeMachine {
@@ -100,14 +102,10 @@
     </div>
   </div>
 
+  <!-- Control & Input Setup -->
   <script>
-    const gameWindow = window;
-
     function simulateKey(key, isDown) {
-      const event = new KeyboardEvent(isDown ? 'keydown' : 'keyup', {
-        key,
-        bubbles: true
-      });
+      const event = new KeyboardEvent(isDown ? 'keydown' : 'keyup', { key, bubbles: true });
       document.dispatchEvent(event);
     }
 
@@ -165,19 +163,22 @@
       setupButton('pauseBtn', 'Escape');
     }
 
-    window.addEventListener('load', () => {
-      setupControls();
-    });
+    window.addEventListener('load', setupControls);
+  </script>
 
-    setInterval(() => {
-      try {
-        if (window.Q && Q.state) {
-          const hud = document.getElementById('hudDisplay');
-          const coins = Q.state.get('coins') || 0;
-          hud.textContent = `COINS: ${coins}`;
-        }
-      } catch (e) {}
-    }, 100);
+  <!-- Perfect-Fit Scaling -->
+  <script>
+    function scaleArcade() {
+      const wrap = document.getElementById('arcadeWrapper');
+      const W = window.innerWidth;
+      const H = window.innerHeight;
+      const origW = 500;
+      const origH = 900;
+      const scale = Math.min(W / origW, H / origH);
+      wrap.style.transform = `scale(${scale})`;
+    }
+    window.addEventListener('load', scaleArcade);
+    window.addEventListener('resize', scaleArcade);
   </script>
 </body>
 </html>
