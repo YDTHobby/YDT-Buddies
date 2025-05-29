@@ -1,19 +1,19 @@
 function loadYarnball(Q) {
     
-    Q.animations('Yarnball animation', {
+    Q.animations('yarnball animation', {
         'live': { frames: [0, 1, 2], rate: 1 / 3 }
     });
     /**
      * Clase que representa a una moneda.
      */
-    Q.Sprite.extend('Yarnball', {
+    Q.Sprite.extend('yarnball', {
         init: function(p) {
             this._super(p, {
-                sprite: 'Yarnball animation',
+                sprite: 'yarnball animation',
                 /**
                  * Sprite de la moneda.
                  */
-                sheet: 'Yarnball',
+                sheet: 'yarnball',
                 /**
                  * Activamos el sensor de la moneda.
                  */
@@ -33,8 +33,8 @@ function loadYarnball(Q) {
             this.animate({ y: this.p.y - 50 }, 0.3, { callback: get });
             if (!this.p.get) {
                 this.p.get = true;
-                Q.state.inc('Yarnballs', 1);
-                Q.audio.play('Yarnball.mp3');
+                Q.state.inc('yarnballs', 1);
+                Q.audio.play('yarnball.mp3');
             }
         },
 
