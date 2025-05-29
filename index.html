@@ -1,157 +1,144 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>YDT Barnyard Buddies - Arcade</title>
-  <link rel="stylesheet" type="text/css" href="css/style.css">
-  <script src="lib/quintus.js"></script>
-  <script src="lib/quintus_input.js"></script>
-  <script src="lib/quintus_scenes.js"></script>
-  <script src="lib/quintus_sprites.js"></script>
-  <script src="lib/quintus_touch.js"></script>
-  <script src="lib/quintus_ui.js"></script>
-  <script src="lib/quintus_tmx.js"></script>
-  <script src="lib/quintus_2d.js"></script>
-  <script src="lib/quintus_anim.js"></script>
-  <script src="lib/quintus_audio.js"></script>
-  <script src="js/nugget.js"></script>
-  <script src="js/defaultenemy.js"></script>
-  <script src="js/tangledyarn.js"></script>
-  <script src="js/cat.js"></script>
-  <script src="js/princessmabel.js"></script>
-  <script src="js/yarnball.js"></script>
-  <script src="js/endgame.js"></script>
-  <script src="js/maintitle.js"></script>
-  <script src="js/level1.js"></script>
-  <script src="js/hub.js"></script>
+  <title>YDT Barnyard Buddies - Arcade Cabinet</title>
   <style>
-    /* Keep your existing arcade style CSS here */
-    body {
-      background: #1a1a1a;
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: #1a1a1a;
+      font-family: 'Courier New', monospace;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      font-family: 'Courier New', monospace;
-      overflow: hidden;
+      height: 100vh;
     }
-    #arcadeMachine { width: 500px; height: 900px; background: #222; border-radius: 20px; padding: 20px; position: relative; }
-    #screenContainer { width: 320px; height: 480px; background: #111; margin: 0 auto; position: relative; }
-    canvas { display: block; image-rendering: pixelated; }
-    .joystick-container, .arcadeButton { margin-top: 10px; }
+    #screenContainer {
+      width: 320px;
+      height: 480px;
+      position: relative;
+      background: #000;
+      box-shadow: inset 0 0 30px rgba(255,255,255,0.1);
+      border-radius: 10px;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    #controls {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+    .arcadeButton {
+      width: 60px;
+      height: 60px;
+      background: radial-gradient(circle at 30% 30%, #ff3333, #cc0000);
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.5);
+      color: white;
+      font-weight: bold;
+    }
+    .arcadeButton:active {
+      transform: translateY(2px);
+    }
   </style>
 </head>
 <body>
-  <div id="arcadeMachine">
+  <div>
     <div id="screenContainer"></div>
-    <div class="joystick-container">
-      <div class="joystick" id="joystick"></div>
-    </div>
-    <div class="button-row">
-      <button class="arcadeButton" id="jumpBtn">Jump</button>
-    </div>
-    <div class="button-row">
-      <button class="arcadeButton" id="startBtn">Start</button>
-      <button class="arcadeButton" id="pauseBtn">Pause</button>
+    <div id="controls">
+      <button class="arcadeButton" id="leftBtn">◀</button>
+      <button class="arcadeButton" id="jumpBtn">▲</button>
+      <button class="arcadeButton" id="rightBtn">▶</button>
+      <button class="arcadeButton" id="startBtn">⏎</button>
+      <button class="arcadeButton" id="pauseBtn">⏸</button>
     </div>
   </div>
 
-<script>
-var fondo_escenario = 580;
-var Q = Quintus({ audioSupported: ['mp3', 'ogg'] })
-  .include('Sprites, Scenes, Input, 2D, Anim, Touch, UI, TMX, Audio')
-  .setup("screenContainer", { width: 320, height: 480 })
-  .input.keyboardControls({
-    LEFT: 'left', RIGHT: 'right', UP: 'up', DOWN: 'down',
-    SPACE: 'fire', ENTER: 'confirm', ESC: 'pause',
-    ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'up', ArrowDown: 'down'
-  })
-  .controls().touch().enableSound();
+  <!-- Quintus Engine -->
+  <script src="lib/quintus.js"></script>
+  <script src="lib/quintus_input.js"></script>
+  <script src="lib/quintus_sprites.js"></script>
+  <script src="lib/quintus_scenes.js"></script>
+  <script src="lib/quintus_2d.js"></script>
+  <script src="lib/quintus_anim.js"></script>
+  <script src="lib/quintus_touch.js"></script>
+  <script src="lib/quintus_ui.js"></script>
+  <script src="lib/quintus_tmx.js"></script>
+  <script src="lib/quintus_audio.js"></script>
 
-loadNugget(Q);
-loadPrincessMabel(Q);
-loadDefaultEnemy(Q);
-loadTangledyarn(Q);
-loadCat(Q);
-loadYarnball(Q);
-loadEndGame(Q);
-loadMainTitle(Q);
-loadHUB(Q);
-loadLevel1(Q);
+  <!-- Game Files -->
+  <script src="js/nugget.js"></script>
+  <script src="js/princess.js"></script>
+  <script src="js/enemy.js"></script>
+  <script src="js/tangledyarn.js"></script>
+  <script src="js/cat.js"></script>
+  <script src="js/yarnball.js"></script>
+  <script src="js/endgame.js"></script>
+  <script src="js/mainTitle.js"></script>
+  <script src="js/hub.js"></script>
+  <script src="js/level1.js"></script>
+  <script src="js/game.js"></script>
 
-Q.loadTMX('level.tmx, mainTitle.png, nugget_small.png, nugget_small.json, tangledyarn.png, tangledyarn.json, cat.png, cat.json, princess.png, yarnball.png, yarnball.json, music_main.mp3, music_main.ogg, music_die.mp3, music_die.ogg, music_level_complete.mp3, music_level_complete.ogg, yarnball.mp3, yarnball.ogg', function() {
-  Q.compileSheets('nugget_small.png', 'nugget_small.json');
-  Q.compileSheets('tangledyarn.png', 'tangledyarn.json');
-  Q.compileSheets('cat.png', 'cat.json');
-  Q.compileSheets('yarnball.png', 'yarnball.json');
-  Q.stageScene('mainTitle');
-});
+  <script>
+    let Q;
+    window.addEventListener('load', function () {
+      Q = Quintus({ audioSupported: ['mp3','ogg'] })
+        .include("Sprites, Scenes, Input, 2D, Anim, Touch, UI, TMX, Audio")
+        .setup("screenContainer", { width: 320, height: 480 })
+        .controls().touch().enableSound();
 
-function simulateKey(key, isDown) {
-  const event = new KeyboardEvent(isDown ? 'keydown' : 'keyup', {
-    key,
-    bubbles: true
-  });
-  window.dispatchEvent(event);
-}
+      if (typeof loadNugget === 'function') loadNugget(Q);
+      if (typeof loadPrincessMabel === 'function') loadPrincessMabel(Q);
+      if (typeof loadDefaultEnemy === 'function') loadDefaultEnemy(Q);
+      if (typeof loadTangledyarn === 'function') loadTangledyarn(Q);
+      if (typeof loadCat === 'function') loadCat(Q);
+      if (typeof loadYarnball === 'function') loadYarnball(Q);
+      if (typeof loadEndGame === 'function') loadEndGame(Q);
+      if (typeof loadMainTitle === 'function') loadMainTitle(Q);
+      if (typeof loadHUB === 'function') loadHUB(Q);
+      if (typeof loadLevel1 === 'function') loadLevel1(Q);
 
-function setupJoystick() {
-  const joystickEl = document.getElementById('joystick');
-  const container = joystickEl.parentElement;
-  let active = false;
-  let lastLeft = false;
-  let lastRight = false;
+      Q.loadTMX("level.tmx, mainTitle.png, nugget_small.png, nugget_small.json, tangledyarn.png, tangledyarn.json, cat.png, cat.json, princess.png, yarnball.png, yarnball.json, music_main.mp3, music_main.ogg, music_die.mp3, music_die.ogg, music_level_complete.mp3, music_level_complete.ogg, yarnball.mp3, yarnball.ogg", function() {
+        Q.compileSheets("nugget_small.png", "nugget_small.json");
+        Q.compileSheets("tangledyarn.png", "tangledyarn.json");
+        Q.compileSheets("cat.png", "cat.json");
+        Q.compileSheets("yarnball.png", "yarnball.json");
+        Q.stageScene("mainTitle");
+      });
+    });
 
-  const updateJoystick = (e) => {
-    if (!active) return;
-    const rect = container.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const x = clientX - centerX;
-    const distance = Math.abs(x);
-    const maxDistance = rect.width / 2 - 25;
-    const moveX = Math.max(-maxDistance, Math.min(maxDistance, x));
-    joystickEl.style.transform = `translate(${moveX}px, 0)`;
-    const goingLeft = moveX < -10;
-    const goingRight = moveX > 10;
-    if (goingLeft !== lastLeft) { simulateKey('ArrowLeft', goingLeft); lastLeft = goingLeft; }
-    if (goingRight !== lastRight) { simulateKey('ArrowRight', goingRight); lastRight = goingRight; }
-  };
+    function simulateKey(key, isDown) {
+      const event = new KeyboardEvent(isDown ? 'keydown' : 'keyup', {
+        key,
+        bubbles: true,
+      });
+      window.dispatchEvent(event);
+    }
 
-  const startJoystick = (e) => { e.preventDefault(); active = true; updateJoystick(e); };
-  const endJoystick = () => {
-    active = false;
-    joystickEl.style.transform = 'translate(0, 0)';
-    simulateKey('ArrowLeft', false);
-    simulateKey('ArrowRight', false);
-    lastLeft = false;
-    lastRight = false;
-  };
+    function setupArcadeButtons() {
+      const bindButton = (id, key) => {
+        const btn = document.getElementById(id);
+        btn.addEventListener('mousedown', () => simulateKey(key, true));
+        btn.addEventListener('mouseup', () => simulateKey(key, false));
+        btn.addEventListener('touchstart', (e) => { e.preventDefault(); simulateKey(key, true); });
+        btn.addEventListener('touchend', () => simulateKey(key, false));
+      };
 
-  container.addEventListener('mousedown', startJoystick);
-  container.addEventListener('touchstart', startJoystick);
-  window.addEventListener('mousemove', updateJoystick);
-  window.addEventListener('touchmove', updateJoystick);
-  window.addEventListener('mouseup', endJoystick);
-  window.addEventListener('touchend', endJoystick);
-}
+      bindButton('leftBtn', 'ArrowLeft');
+      bindButton('rightBtn', 'ArrowRight');
+      bindButton('jumpBtn', 'ArrowUp');
+      bindButton('startBtn', 'Enter');
+      bindButton('pauseBtn', 'Escape');
+    }
 
-function setupButton(id, key) {
-  const btn = document.getElementById(id);
-  if (!btn) return;
-  const press = (e) => { e.preventDefault(); simulateKey(key, true); };
-  const release = (e) => { e.preventDefault(); simulateKey(key, false); };
-  btn.addEventListener('mousedown', press);
-  btn.addEventListener('touchstart', press);
-  btn.addEventListener('mouseup', release);
-  btn.addEventListener('touchend', release);
-  btn.addEventListener('mouseleave', release);
-}
-
-setupJoystick();
-setupButton('jumpBtn', 'ArrowUp');
-setupButton('startBtn', 'Enter');
-setupButton('pauseBtn', 'Escape');
-</script>
+    setupArcadeButtons();
+  </script>
 </body>
 </html>
