@@ -1,0 +1,310 @@
+/* YDT Barnyard Buddies Arcade Machine Styling */
+
+/* Arcade Cabinet Colors and Theme */
+:root {
+    --cabinet-primary: #2a2a2a;
+    --cabinet-secondary: #1a1a1a;
+    --marquee-primary: #8B4513;
+    --marquee-secondary: #D2691E;
+    --button-red: #ff3333;
+    --button-red-dark: #cc0000;
+    --button-yellow: #FFD700;
+    --button-yellow-dark: #FFA500;
+    --button-green: #00ff00;
+    --button-green-dark: #00cc00;
+    --button-blue: #3333ff;
+    --button-blue-dark: #0000cc;
+}
+
+/* Arcade Machine Glow Effects */
+.arcade-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 
+            0 0 20px rgba(255, 215, 0, 0.5),
+            0 0 40px rgba(255, 215, 0, 0.3),
+            0 0 60px rgba(255, 215, 0, 0.1);
+    }
+    50% {
+        box-shadow: 
+            0 0 30px rgba(255, 215, 0, 0.7),
+            0 0 50px rgba(255, 215, 0, 0.5),
+            0 0 70px rgba(255, 215, 0, 0.3);
+    }
+}
+
+/* Button Press Animation */
+.arcadeButton.pressed {
+    animation: button-press 0.1s ease-out;
+}
+
+@keyframes button-press {
+    0% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(3px) scale(0.95);
+    }
+    100% {
+        transform: translateY(3px) scale(1);
+    }
+}
+
+/* Joystick Animation */
+.joystick.active {
+    box-shadow: 
+        0 5px 10px rgba(0,0,0,0.5),
+        inset 0 -5px 10px rgba(0,0,0,0.3),
+        0 0 20px rgba(255, 0, 0, 0.5);
+}
+
+/* Screen Flicker Effect (CRT Style) */
+@keyframes flicker {
+    0% {
+        opacity: 1;
+    }
+    4% {
+        opacity: 0.95;
+    }
+    6% {
+        opacity: 1;
+    }
+    8% {
+        opacity: 0.98;
+    }
+    9% {
+        opacity: 1;
+    }
+    11% {
+        opacity: 0.9;
+    }
+    12% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.crt-flicker {
+    animation: flicker 10s infinite;
+}
+
+/* Scanline Effect */
+.scanlines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        transparent 50%,
+        rgba(0, 0, 0, 0.1) 50%
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+    opacity: 0.3;
+}
+
+/* Coin Counter Animation */
+@keyframes coin-bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+.coin-display {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.coin-icon {
+    width: 20px;
+    height: 20px;
+    background: radial-gradient(circle at 30% 30%, #FFD700, #FFA500);
+    border-radius: 50%;
+    display: inline-block;
+    animation: coin-bounce 1s ease-in-out infinite;
+}
+
+/* Custom Arcade Font */
+@font-face {
+    font-family: 'ArcadeFont';
+    src: url('fonts/arcade.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.arcade-text {
+    font-family: 'ArcadeFont', 'Courier New', monospace;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* Side Panel Decorations */
+.side-speaker {
+    position: absolute;
+    width: 60px;
+    height: 100px;
+    background: #000;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.side-speaker::before {
+    content: '';
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    width: 80%;
+    height: 80%;
+    background: repeating-linear-gradient(
+        0deg,
+        #333 0px,
+        #333 2px,
+        #000 2px,
+        #000 4px
+    );
+}
+
+.side-speaker.left {
+    left: -80px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.side-speaker.right {
+    right: -80px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Coin Slot */
+.coin-slot {
+    position: absolute;
+    bottom: 250px;
+    right: 20px;
+    width: 40px;
+    height: 60px;
+    background: #000;
+    border-radius: 20px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+}
+
+.coin-slot::after {
+    content: '25¢';
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #FFD700;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Instruction Panel */
+.instructions {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.7);
+    color: #FFF;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 10px;
+    text-align: center;
+}
+
+/* Mobile Touch Indicators */
+@media (hover: none) {
+    .touch-indicator {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        border: 2px solid rgba(255,255,255,0.5);
+        border-radius: 50%;
+        pointer-events: none;
+        animation: touch-pulse 1s ease-out;
+        opacity: 0;
+    }
+    
+    @keyframes touch-pulse {
+        0% {
+            transform: scale(0.5);
+            opacity: 1;
+        }
+        100% {
+            transform: scale(2);
+            opacity: 0;
+        }
+    }
+}
+
+/* High Score Display */
+.high-score-display {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #000;
+    color: #FFD700;
+    padding: 5px 10px;
+    border: 2px solid #FFD700;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+/* Loading Screen */
+.arcade-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.arcade-loading-text {
+    color: #FFD700;
+    font-size: 24px;
+    margin-bottom: 20px;
+    animation: loading-blink 1s ease-in-out infinite;
+}
+
+@keyframes loading-blink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.3;
+    }
+}
+
+.arcade-loading-bar {
+    width: 200px;
+    height: 20px;
+    background: #333;
+    border: 2px solid #FFD700;
+    overflow: hidden;
+}
+
+.arcade-loading-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #FFD700, #FFA500);
+    width: 0%;
+    transition: width 0.3s ease-out;
+}
