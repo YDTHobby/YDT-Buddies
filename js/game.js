@@ -7,7 +7,14 @@ window.addEventListener('load', function() {
             width: 320,
             height: 480
         })
-        .controls().touch().enableSound();// ENABLE KEYBOARD CONTROLS
+        .controls().input.keyboardControls({
+  LEFT: 'left',
+  RIGHT: 'right',
+  SPACE: 'fire',
+  ENTER: 'confirm',
+  ESC: 'pause'
+}).touch().enableSound();
+
 
     loadNugget(Q);
     loadPrincessMabel(Q);
