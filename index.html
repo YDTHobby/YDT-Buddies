@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>YDT Barnyard Buddies - Arcade Machine</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/arcade-style.css">
@@ -16,6 +16,12 @@
       overflow: hidden;
       font-family: 'Courier New', monospace;
       background: #1a1a1a;
+      /* Prevent mobile zoom and selection */
+      touch-action: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
 
     #arcadeWrapper {
@@ -27,20 +33,25 @@
       transform-origin: center center;
     }
 
-    /* Fixed arcade machine dimensions - no media queries */
+    /* Fixed arcade machine dimensions - NO RESPONSIVE CHANGES */
     #arcadeMachine {
-      width: 500px;
-      height: 900px;
+      width: 500px !important;
+      height: 900px !important;
       position: relative;
     }
 
-    /* Override any media queries from arcade-style.css */
-    @media (max-width: 600px), (max-height: 700px) {
-      #arcadeMachine {
-        width: 500px !important;
-        height: 900px !important;
-        max-width: none !important;
-      }
+    /* Prevent any touch highlighting on mobile */
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Ensure buttons don't get mobile browser styling */
+    button {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      outline: none;
+      border: none;
     }
   </style>
 
@@ -108,6 +119,13 @@
 
   <!-- Fixed Control & Input Setup -->
   <script>
+    // Prevent default touch behaviors on mobile
+    document.addEventListener('touchstart', function(e) {
+      if (e.target.closest('#controlPanel') || e.target.closest('#gameFrame')) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
     // Create and dispatch keyboard events that Quintus can understand
     function simulateKey(keyCode, key, isDown) {
       const event = new KeyboardEvent(isDown ? 'keydown' : 'keyup', {
@@ -221,6 +239,7 @@
       
       const press = (e) => {
         e.preventDefault();
+        e.stopPropagation();
         if (!isPressed) {
           isPressed = true;
           simulateKey(keyCode, keyName, true);
@@ -230,6 +249,7 @@
       
       const release = (e) => {
         e.preventDefault();
+        e.stopPropagation();
         if (isPressed) {
           isPressed = false;
           simulateKey(keyCode, keyName, false);
@@ -290,7 +310,13 @@
     // Initial scale and on resize
     window.addEventListener('resize', scaleArcade);
     window.addEventListener('load', scaleArcade);
+    window.addEventListener('orientationchange', scaleArcade);
     scaleArcade(); // Call immediately
+
+    // Prevent pinch zoom on mobile
+    document.addEventListener('gesturestart', function(e) {
+      e.preventDefault();
+    });
   </script>
 
   <!-- Button visual feedback -->
