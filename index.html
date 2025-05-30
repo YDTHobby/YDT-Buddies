@@ -294,11 +294,25 @@
   </script>
 
   <!-- Button visual feedback -->
-  <style>
-    .arcadeButton.pressed {
-      transform: translateY(3px);
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5), inset 0 -2px 5px rgba(0, 0, 0, 0.3);
+<style>
+  .arcadeButton.pressed {
+    transform: translateY(3px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5), inset 0 -2px 5px rgba(0, 0, 0, 0.3);
+  }
+</style>
+
+<!-- ✅ Fix Chrome Autoplay Policy -->
+<script>
+  function unlockAudioOnce() {
+    if (typeof Q !== 'undefined' && Q.enableSound) {
+      Q.enableSound();
     }
-  </style>
+    document.removeEventListener('click', unlockAudioOnce);
+    document.removeEventListener('touchstart', unlockAudioOnce);
+  }
+
+  document.addEventListener('click', unlockAudioOnce);
+  document.addEventListener('touchstart', unlockAudioOnce);
+</script>
 </body>
 </html>
