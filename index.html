@@ -293,7 +293,7 @@
     scaleArcade(); // Call immediately
   </script>
 
-  <!-- Button visual feedback -->
+<!-- Button visual feedback -->
 <style>
   .arcadeButton.pressed {
     transform: translateY(3px);
@@ -301,18 +301,36 @@
   }
 </style>
 
-<!-- ✅ Fix Chrome Autoplay Policy -->
+<!-- ✅ Fix Chrome Autoplay Policy (triggered by Start button) -->
 <script>
-  function unlockAudioOnce() {
-    if (typeof Q !== 'undefined' && Q.enableSound) {
-      Q.enableSound();
+  function unlockAudio() {
+    if (!Q || !Q.enableSound) return;
+    Q.enableSound();
+
+    // Resume AudioContext if paused
+    if (Q.audioContext && Q.audioContext.state === 'suspended') {
+      Q.audioContext.resume();
     }
-    document.removeEventListener('click', unlockAudioOnce);
-    document.removeEventListener('touchstart', unlockAudioOnce);
+
+    // Patch Q.audio.play to delay calls until audio is unlocked
+    const originalPlay = Q.audio.play;
+    Q.audio.play = function () {
+      if (!Q.audio.type) {
+        setTimeout(() => Q.audio.play.apply(Q.audio, arguments), 50);
+        return;
+      }
+      return originalPlay.apply(Q.audio, arguments);
+    };
   }
 
-  document.addEventListener('click', unlockAudioOnce);
-  document.addEventListener('touchstart', unlockAudioOnce);
+  // Attach to Start button only
+  window.addEventListener('DOMContentLoaded', () => {
+    const startBtn = document.getElementById('startBtn');
+    if (startBtn) {
+      startBtn.addEventListener('click', unlockAudio, { once: true });
+      startBtn.addEventListener('touchstart', unlockAudio, { once: true });
+    }
+  });
 </script>
 </body>
 </html>
