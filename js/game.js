@@ -40,7 +40,8 @@ window.addEventListener('load', function() {
     loadEndGame(Q);
     loadMainTitle(Q);
     loadHUB(Q);
-
+    
+loadWorldMap(Q);
     loadLevel1(Q);
     /**
      * We load the files we need for the game.
