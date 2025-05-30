@@ -304,15 +304,15 @@
 <!-- ✅ Fix Chrome Autoplay Policy (triggered by Start button) -->
 <script>
   function unlockAudio() {
-    if (!Q || !Q.enableSound) return;
-    Q.enableSound();
+    if (typeof Q === 'undefined' || !Q.enableSound) return;
 
-    // Resume AudioContext if paused
+    Q.enableSound(); // Allows Quintus to play audio
+
     if (Q.audioContext && Q.audioContext.state === 'suspended') {
       Q.audioContext.resume();
     }
 
-    // Patch Q.audio.play to delay calls until audio is unlocked
+    // Optional: Patch Q.audio.play to queue until unlocked
     const originalPlay = Q.audio.play;
     Q.audio.play = function () {
       if (!Q.audio.type) {
@@ -323,7 +323,7 @@
     };
   }
 
-  // Attach to Start button only
+  // Only unlock audio on user interaction (e.g., Start button click)
   window.addEventListener('DOMContentLoaded', () => {
     const startBtn = document.getElementById('startBtn');
     if (startBtn) {
