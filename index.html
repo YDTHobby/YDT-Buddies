@@ -148,7 +148,7 @@
         const moveX = Math.max(-maxMove, Math.min(maxMove, deltaX));
         
         // Apply transform
-        joystickEl.style.transform = `translate(${moveX}px, 0)`;
+        joystickEl.style.transform = translate(${moveX}px, 0);
 
         // Determine direction
         let newDirection = null;
@@ -284,7 +284,7 @@
       const scale = Math.min(scaleX, scaleY) * 0.95; // 0.95 for a bit of padding
 
       // Apply scale to wrapper
-      wrap.style.transform = `scale(${scale})`;
+      wrap.style.transform = scale(${scale});
     }
 
     // Initial scale and on resize
@@ -293,44 +293,12 @@
     scaleArcade(); // Call immediately
   </script>
 
-<!-- Button visual feedback -->
-<style>
-  .arcadeButton.pressed {
-    transform: translateY(3px);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5), inset 0 -2px 5px rgba(0, 0, 0, 0.3);
-  }
-</style>
-
-<!-- ✅ Fix Chrome Autoplay Policy (triggered by Start button) -->
-<script>
-  function unlockAudio() {
-    if (typeof Q === 'undefined' || !Q.enableSound) return;
-
-    Q.enableSound(); // Allows Quintus to play audio
-
-    if (Q.audioContext && Q.audioContext.state === 'suspended') {
-      Q.audioContext.resume();
+  <!-- Button visual feedback -->
+  <style>
+    .arcadeButton.pressed {
+      transform: translateY(3px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5), inset 0 -2px 5px rgba(0, 0, 0, 0.3);
     }
-
-    // Optional: Patch Q.audio.play to queue until unlocked
-    const originalPlay = Q.audio.play;
-    Q.audio.play = function () {
-      if (!Q.audio.type) {
-        setTimeout(() => Q.audio.play.apply(Q.audio, arguments), 50);
-        return;
-      }
-      return originalPlay.apply(Q.audio, arguments);
-    };
-  }
-
-  // Only unlock audio on user interaction (e.g., Start button click)
-  window.addEventListener('DOMContentLoaded', () => {
-    const startBtn = document.getElementById('startBtn');
-    if (startBtn) {
-      startBtn.addEventListener('click', unlockAudio, { once: true });
-      startBtn.addEventListener('touchstart', unlockAudio, { once: true });
-    }
-  });
-</script>
+  </style>
 </body>
 </html>
