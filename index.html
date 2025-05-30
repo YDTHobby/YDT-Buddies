@@ -130,14 +130,22 @@
       const container = joystickEl.parentElement;
       let active = false;
       let currentDirection = null;
+      let startX = 0;
 
       const updateJoystick = (e) => {
         if (!active) return;
         e.preventDefault();
         
         const rect = container.getBoundingClientRect();
-        const x = (e.touches ? e.touches[0].clientX : e.clientX) - (rect.left + rect.width / 2);
-        const moveX = Math.max(-rect.width/2 + 25, Math.min(rect.width/2 - 25, x));
+        const centerX = rect.left + rect.width / 2;
+        const touchX = e.touches ? e.touches[0].clientX : e.clientX;
+        const deltaX = touchX - startX;
+        
+        // Limit movement to horizontal axis only, with boundaries
+        const maxMove = rect.width / 2 - 25;
+        const moveX = Math.max(-maxMove, Math.min(maxMove, deltaX));
+        
+        // Apply transform
         joystickEl.style.transform = `translate(${moveX}px, 0)`;
 
         // Determine direction
@@ -162,13 +170,27 @@
       const start = (e) => {
         e.preventDefault();
         active = true;
-        updateJoystick(e);
+        
+        // Store the starting position
+        const rect = container.getBoundingClientRect();
+        startX = e.touches ? e.touches[0].clientX : e.clientX;
+        
+        // Reset joystick to center first
+        joystickEl.style.transform = 'translate(0, 0)';
       };
 
       const end = (e) => {
         e.preventDefault();
         active = false;
+        
+        // Animate back to center
+        joystickEl.style.transition = 'transform 0.2s ease-out';
         joystickEl.style.transform = 'translate(0, 0)';
+        
+        // Remove transition after animation
+        setTimeout(() => {
+          joystickEl.style.transition = '';
+        }, 200);
         
         // Release any pressed direction
         if (currentDirection === 'left') simulateKey(37, 'ArrowLeft', false);
@@ -180,11 +202,13 @@
       container.addEventListener('touchstart', start, { passive: false });
       window.addEventListener('touchmove', updateJoystick, { passive: false });
       window.addEventListener('touchend', end, { passive: false });
+      window.addEventListener('touchcancel', end, { passive: false });
       
       // Mouse events
       container.addEventListener('mousedown', start);
       window.addEventListener('mousemove', updateJoystick);
       window.addEventListener('mouseup', end);
+      window.addEventListener('mouseleave', end);
     }
 
     function setupButton(buttonId, keyCode, keyName) {
