@@ -3,7 +3,6 @@
  * @type {Number}
  */
 var fondo_escenario = 580;
-
 window.addEventListener('load', function() {
     /**
      * Main variable of the Quintus.
@@ -17,32 +16,52 @@ window.addEventListener('load', function() {
         /**
          * The window is adjusted.
          */
-.setup("gameFrame", {
-    width: 320,
-    height: 480
-})
+        .setup("gameFrame", {
+            width: 320,
+            height: 480
+        })
         /**
          * Functionality is added.
          */
         .controls().touch().enableSound();
+    
     /**
      * We load the various components that we will use during the game.
      */
     loadNugget(Q);
     loadPrincessMabel(Q);
-
     loadDefaultEnemy(Q);
     loadTangledyarn(Q);
     loadCat(Q);
-
     loadYarnball(Q);
-
     loadEndGame(Q);
     loadMainTitle(Q);
     loadHUB(Q);
-    
-loadWorldMap(Q);
+    loadWorldMap(Q);
     loadLevel1(Q);
+    
+    /**
+     * Load saved progress from localStorage
+     */
+    if (typeof(Storage) !== "undefined") {
+        var savedProgress = localStorage.getItem('ydtProgress');
+        if (savedProgress) {
+            Q.state.set('progress', JSON.parse(savedProgress));
+        } else {
+            // Set default progress if no save exists
+            Q.state.set('progress', {
+                unlockedLevels: 1,
+                completedLevels: []
+            });
+        }
+    } else {
+        // No localStorage support, use default
+        Q.state.set('progress', {
+            unlockedLevels: 1,
+            completedLevels: []
+        });
+    }
+    
     /**
      * We load the files we need for the game.
      */
