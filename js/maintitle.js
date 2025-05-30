@@ -15,19 +15,29 @@ function loadMainTitle(Q) {
             y: (Q.height / 2) - 5
         }));
 
-button.on('click', function() {
-    Q.clearStages();
-    Q.state.set('play', true);
-    Q.stageScene('worldMap');
-});
+        button.on('click', function() {
+            Q.clearStages();
+            Q.state.set('play', true);
+            Q.stageScene('worldMap');
 
-Q.input.on('confirm', function() {
-    if (!Q.state.get('play')) {
-        Q.clearStages();
-        Q.state.set('play', true);
-        Q.stageScene('worldMap');
-    }
-});
+            // ✅ Play music only after interaction
+            Q.audio.stop('music_level_complete.mp3');
+            Q.audio.stop('music_die.mp3');
+            Q.audio.play('music_main.mp3', { loop: true });
+        });
+
+        Q.input.on('confirm', function() {
+            if (!Q.state.get('play')) {
+                Q.clearStages();
+                Q.state.set('play', true);
+                Q.stageScene('worldMap');
+
+                // ✅ Play music only after interaction
+                Q.audio.stop('music_level_complete.mp3');
+                Q.audio.stop('music_die.mp3');
+                Q.audio.play('music_main.mp3', { loop: true });
+            }
+        });
 
         var label = container.insert(new Q.UI.Text({
             x: 0,
@@ -39,9 +49,6 @@ Q.input.on('confirm', function() {
 
         Q.state.set('play', false);
         Q.state.reset({ coins: 0 });
-        Q.audio.stop('music_level_complete.mp3');
-        Q.audio.stop('music_die.mp3');
-        Q.audio.play('music_main.mp3', { loop: true });
 
         container.fit(20);
     });
