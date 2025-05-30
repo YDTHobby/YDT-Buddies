@@ -15,8 +15,8 @@ body {
   align-items: center;
   width: 100%;
   height: 100%;
-  /* make the JS scale originate from the top-center */
-  transform-origin: top center;
+  /* make the JS scale originate from the center */
+  transform-origin: center center;
 }
 
 /* === Reset and Pixelated Rendering === */
@@ -39,11 +39,11 @@ body {
   overflow: hidden;
 }
 
-/* === Arcade Machine Container === */
+/* === Arcade Machine Container - FIXED DIMENSIONS === */
 #arcadeMachine {
   position: relative;
-  width: 500px;
-  height: 900px;
+  width: 500px !important;
+  height: 900px !important;
   background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
   border-radius: 20px 20px 10px 10px;
   box-shadow:
@@ -60,8 +60,8 @@ body {
   top: -80px;
   left: 50%;
   transform: translateX(-50%);
-  width: 400px;
-  height: 80px;
+  width: 400px !important;
+  height: 80px !important;
   background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
   border-radius: 10px 10px 0 0;
   display: flex;
@@ -74,7 +74,7 @@ body {
 
 #marquee h1 {
   color: #FFF;
-  font-size: 24px;
+  font-size: 24px !important;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   font-weight: bold;
   letter-spacing: 2px;
@@ -84,7 +84,7 @@ body {
 #screenBezel {
   position: relative;
   width: 100%;
-  height: 550px;
+  height: 550px !important;
   background: #000;
   border-radius: 15px;
   padding: 20px;
@@ -126,19 +126,19 @@ body {
 
 /* === Game Frame === */
 #gameFrame {
-  width: 320px;
-  height: 480px;
+  width: 320px !important;
+  height: 480px !important;
   border: none;
 }
 
-/* === Control Panel === */
+/* === Control Panel - FIXED DIMENSIONS === */
 #controlPanel {
   position: absolute;
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   width: 95%;
-  height: 200px;
+  height: 200px !important;
   background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
   border-radius: 10px;
   box-shadow:
@@ -149,13 +149,14 @@ body {
   align-items: center;
   padding: 20px;
   flex-wrap: wrap;
+  gap: 0 !important;
 }
 
-/* === Joystick === */
+/* === Joystick - FIXED SIZE === */
 .joystick-container {
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: 100px !important;
+  height: 100px !important;
   background: #1a1a1a;
   border-radius: 50%;
   box-shadow:
@@ -168,8 +169,8 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 50px;
-  height: 50px;
+  width: 50px !important;
+  height: 50px !important;
   background: radial-gradient(circle at 30% 30%, #ff3333, #cc0000);
   border-radius: 50%;
   box-shadow:
@@ -179,15 +180,15 @@ body {
   transition: transform 0.1s;
 }
 
-/* === Buttons === */
+/* === Buttons - FIXED SIZES === */
 .button-row {
   display: flex;
   gap: 15px;
 }
 
 .arcadeButton {
-  width: 60px;
-  height: 60px;
+  width: 60px !important;
+  height: 60px !important;
   background: radial-gradient(circle at 30% 30%, #ff3333, #cc0000);
   border: 4px solid #000;
   border-radius: 50%;
@@ -212,8 +213,8 @@ body {
 }
 
 .arcadeButton.small {
-  width: 40px;
-  height: 40px;
+  width: 40px !important;
+  height: 40px !important;
 }
 
 .arcadeButton:active {
@@ -229,7 +230,7 @@ body {
   left: 50%;
   transform: translateX(-50%);
   color: #fff;
-  font-size: 10px;
+  font-size: 10px !important;
   font-weight: bold;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
   white-space: nowrap;
@@ -246,40 +247,118 @@ body {
   left: 50%;
   transform: translateX(-50%);
   color: #FFD700;
-  font-size: 16px;
+  font-size: 16px !important;
   text-align: center;
   text-shadow: 2px 2px 0 #000;
 }
 
-/* === Mobile Responsiveness === */
-@media (max-width: 600px) {
-  #arcadeMachine {
-    width: 95vw;
-    max-width: 400px;
-    height: auto;
-  }
-
-  #marquee {
-    width: 90%;
-  }
-
-  #controlPanel {
-    height: auto;
-    gap: 10px;
-  }
-
-  .joystick-container {
-    width: 80px;
-    height: 80px;
-  }
-
-  .arcadeButton {
-    width: 50px;
-    height: 50px;
-  }
-
-  .arcadeButton.small {
-    width: 35px;
-    height: 35px;
-  }
+/* === Side Speakers === */
+.side-speaker {
+  position: absolute;
+  width: 30px;
+  height: 200px;
+  background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+  box-shadow:
+    inset 0 0 10px rgba(0, 0, 0, 0.5),
+    0 0 5px rgba(255, 255, 255, 0.1);
 }
+
+.side-speaker.left {
+  left: -15px;
+  top: 100px;
+  border-radius: 10px 0 0 10px;
+}
+
+.side-speaker.right {
+  right: -15px;
+  top: 100px;
+  border-radius: 0 10px 10px 0;
+}
+
+.side-speaker::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 160px;
+  background: repeating-linear-gradient(
+    180deg,
+    #000 0px,
+    #000 2px,
+    transparent 2px,
+    transparent 6px
+  );
+  border-radius: 5px;
+}
+
+/* === Coin Slot === */
+.coin-slot {
+  position: absolute;
+  top: 60px;
+  right: 40px;
+  width: 6px;
+  height: 40px;
+  background: #000;
+  border-radius: 3px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.8);
+}
+
+/* === Instructions === */
+.instructions {
+  position: absolute;
+  top: 65px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #FFD700;
+  font-size: 10px !important;
+  text-align: center;
+  text-shadow: 1px 1px 0 #000;
+  font-family: 'Press Start 2P', monospace;
+  letter-spacing: 1px;
+}
+
+/* === CRT Effects === */
+.scanlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15) 0px,
+    transparent 1px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.15) 3px
+  );
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.crt-flicker {
+  animation: flicker 0.15s infinite;
+}
+
+@keyframes flicker {
+  0% { opacity: 0.99; }
+  50% { opacity: 1; }
+  100% { opacity: 0.99; }
+}
+
+/* === Glow Effects === */
+.arcade-text {
+  font-family: 'Press Start 2P', monospace;
+}
+
+.arcade-glow {
+  text-shadow:
+    0 0 10px #FFD700,
+    0 0 20px #FFD700,
+    0 0 30px #FFA500,
+    0 0 40px #FFA500;
+}
+
+/* === NO MOBILE RESPONSIVE CHANGES === */
+/* All dimensions are fixed with !important to prevent any overrides */
