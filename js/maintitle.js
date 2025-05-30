@@ -15,19 +15,19 @@ function loadMainTitle(Q) {
             y: (Q.height / 2) - 5
         }));
 
-        button.on('click', function() {
-            Q.clearStages();
-            Q.state.set('play', true);
-            Q.stageScene('level1');
-        });
+button.on('click', function() {
+    Q.clearStages();
+    Q.state.set('play', true);
+    Q.stageScene('worldMap');
+});
 
-        Q.input.on('confirm', function() {
-            if (!Q.state.get('play')) {
-                Q.clearStages();
-                Q.state.set('play', true);
-                Q.stageScene('level1');
-            }
-        });
+Q.input.on('confirm', function() {
+    if (!Q.state.get('play')) {
+        Q.clearStages();
+        Q.state.set('play', true);
+        Q.stageScene('worldMap');
+    }
+});
 
         var label = container.insert(new Q.UI.Text({
             x: 0,
