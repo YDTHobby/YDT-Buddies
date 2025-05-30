@@ -148,7 +148,7 @@
         const moveX = Math.max(-maxMove, Math.min(maxMove, deltaX));
         
         // Apply transform
-        joystickEl.style.transform = translate(${moveX}px, 0);
+        joystickEl.style.transform = `translate(${moveX}px, 0)`;
 
         // Determine direction
         let newDirection = null;
@@ -284,7 +284,7 @@
       const scale = Math.min(scaleX, scaleY) * 0.95; // 0.95 for a bit of padding
 
       // Apply scale to wrapper
-      wrap.style.transform = scale(${scale});
+      wrap.style.transform = `scale(${scale})`;
     }
 
     // Initial scale and on resize
