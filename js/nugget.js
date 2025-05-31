@@ -33,7 +33,7 @@ function loadNugget(Q) {
                 /**
                  * Nugget velocity parameters.
                  */
-                jumpSpeed: -400,
+                jumpSpeed: -500,
                 speed: 200,
                 vy: 10,
                 /**
