@@ -39,6 +39,9 @@
       height: 900px !important;
       position: relative;
     }
+    #leftBtn::after { content: 'LEFT'; }
+#rightBtn::after { content: 'RIGHT'; }
+
 
     /* Prevent any touch highlighting on mobile */
     * {
@@ -102,10 +105,11 @@
         </div>
       </div>
 
-      <div id="controlPanel">
-        <div class="joystick-container">
-          <div class="joystick" id="joystick"></div>
-        </div>
+<div class="button-row">
+  <button class="arcadeButton small" id="leftBtn"></button>
+  <button class="arcadeButton small" id="rightBtn"></button>
+</div>
+
         <div class="button-row">
           <button class="arcadeButton red" id="jumpBtn"></button>
         </div>
