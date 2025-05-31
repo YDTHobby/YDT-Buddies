@@ -152,32 +152,12 @@ body {
   gap: 0 !important;
 }
 
-/* === Joystick - FIXED SIZE === */
-.joystick-container {
-  position: relative;
-  width: 100px !important;
-  height: 100px !important;
-  background: #1a1a1a;
-  border-radius: 50%;
-  box-shadow:
-    inset 0 5px 15px rgba(0, 0, 0, 0.8),
-    0 2px 5px rgba(255, 255, 255, 0.1);
+#leftBtn::after {
+  content: 'LEFT';
 }
 
-.joystick {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 50px !important;
-  height: 50px !important;
-  background: radial-gradient(circle at 30% 30%, #ff3333, #cc0000);
-  border-radius: 50%;
-  box-shadow:
-    0 5px 10px rgba(0, 0, 0, 0.5),
-    inset 0 -5px 10px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
-  transition: transform 0.1s;
+#rightBtn::after {
+  content: 'RIGHT';
 }
 
 /* === Buttons - FIXED SIZES === */
