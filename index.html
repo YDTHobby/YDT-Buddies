@@ -33,6 +33,10 @@
       appearance: none;
       outline: none; border: none;
     }
+    .arcadeButton.pressed {
+      transform: translateY(3px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5), inset 0 -2px 5px rgba(0, 0, 0, 0.3);
+    }
   </style>
 </head>
 <body>
@@ -68,6 +72,33 @@
     </div>
   </div>
 
+  <!-- Load Quintus engine and game scripts -->
+  <script src="js/arcade-detection.js"></script>
+  <script src="lib/quintus.js"></script>
+  <script src="lib/quintus_input.js"></script>
+  <script src="lib/quintus_scenes.js"></script>
+  <script src="lib/quintus_sprites.js"></script>
+  <script src="lib/quintus_touch.js"></script>
+  <script src="lib/quintus_ui.js"></script>
+  <script src="lib/quintus_tmx.js"></script>
+  <script src="lib/quintus_2d.js"></script>
+  <script src="lib/quintus_anim.js"></script>
+  <script src="lib/quintus_audio.js"></script>
+
+  <script src="js/game.js"></script>
+  <script src="js/nugget.js"></script>
+  <script src="js/defaultenemy.js"></script>
+  <script src="js/tangledyarn.js"></script>
+  <script src="js/cat.js"></script>
+  <script src="js/princessmabel.js"></script>
+  <script src="js/yarnball.js"></script>
+  <script src="js/endgame.js"></script>
+  <script src="js/maintitle.js"></script>
+  <script src="js/worldmap.js"></script>
+  <script src="js/level1.js"></script>
+  <script src="js/hub.js"></script>
+
+  <!-- Input button simulation -->
   <script>
     document.addEventListener('touchstart', function(e) {
       if (e.target.closest('#controlPanel') || e.target.closest('#gameFrame')) {
@@ -140,6 +171,7 @@
     document.addEventListener('DOMContentLoaded', setupControls);
   </script>
 
+  <!-- Scaling logic -->
   <script>
     function scaleArcade() {
       const wrap = document.getElementById('arcadeWrapper');
@@ -161,12 +193,5 @@
     scaleArcade();
     document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
   </script>
-
-  <style>
-    .arcadeButton.pressed {
-      transform: translateY(3px);
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5), inset 0 -2px 5px rgba(0, 0, 0, 0.3);
-    }
-  </style>
 </body>
 </html>
