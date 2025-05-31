@@ -91,7 +91,7 @@
       <div class="side-speaker left"></div>
       <div class="side-speaker right"></div>
       <div class="coin-slot"></div>
-      <div class="instructions">Touch joystick to move. Press Jump to fly!</div>
+<div class="instructions">Use LEFT & RIGHT to move. Press JUMP to fly!</div>
 
       <div id="marquee" class="arcade-text arcade-glow">
         <h1>YDT BARNYARD BUDDIES</h1>
@@ -148,13 +148,6 @@
       document.dispatchEvent(event);
       window.dispatchEvent(event);
     }
-
-    function setupJoystick() {
-      const joystickEl = document.getElementById('joystick');
-      const container = joystickEl.parentElement;
-      let active = false;
-      let currentDirection = null;
-      let startX = 0;
 
       const updateJoystick = (e) => {
         if (!active) return;
@@ -272,12 +265,14 @@
       btn.addEventListener('mouseleave', release);
     }
 
-    function setupControls() {
-      setupJoystick();
-      setupButton('jumpBtn', 38, 'ArrowUp');     // Up arrow
-      setupButton('startBtn', 13, 'Enter');      // Enter key
-      setupButton('pauseBtn', 27, 'Escape');     // Escape key
-    }
+function setupControls() {
+  setupButton('leftBtn', 37, 'ArrowLeft');    // Left arrow
+  setupButton('rightBtn', 39, 'ArrowRight');  // Right arrow
+  setupButton('jumpBtn', 38, 'ArrowUp');      // Up arrow
+  setupButton('startBtn', 13, 'Enter');       // Enter key
+  setupButton('pauseBtn', 27, 'Escape');      // Escape key
+}
+
 
     // Initialize controls when everything is loaded
     window.addEventListener('load', () => {
