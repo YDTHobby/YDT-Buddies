@@ -2,8 +2,6 @@
 <map version="1.0.0" orientation="orthogonal" renderorder="right-down" width="160" height="18" tilewidth="34" tileheight="34" nextobjectid="49">
  <tileset firstgid="1" name="tiles" tilewidth="34" tileheight="34" tilecount="49" columns="7">
   <image source="../images/tiles.png" width="256" height="256"/>
- </tileset>
- <tileset firstgid="50" source="../../../../Documents/Tiles.tsx"/>
  <imagelayer name="background">
   <image source="../images/bg.png" width="5441" height="600"/>
  </imagelayer>
