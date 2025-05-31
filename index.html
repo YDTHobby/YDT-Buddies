@@ -9,94 +9,42 @@
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     html, body {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      padding: 0;
+      width: 100%; height: 100%; margin: 0; padding: 0;
       overflow: hidden;
       font-family: 'Courier New', monospace;
       background: #1a1a1a;
-      /* Prevent mobile zoom and selection */
       touch-action: none;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
+      -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
     }
-
     #arcadeWrapper {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      width: 100vw; height: 100vh;
+      display: flex; justify-content: center; align-items: center;
       transform-origin: center center;
     }
-
-    /* Fixed arcade machine dimensions - NO RESPONSIVE CHANGES */
     #arcadeMachine {
-      width: 500px !important;
-      height: 900px !important;
-      position: relative;
+      width: 500px !important; height: 900px !important; position: relative;
     }
     #leftBtn::after { content: 'LEFT'; }
-#rightBtn::after { content: 'RIGHT'; }
-
-
-    /* Prevent any touch highlighting on mobile */
-    * {
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    /* Ensure buttons don't get mobile browser styling */
+    #rightBtn::after { content: 'RIGHT'; }
+    * { -webkit-tap-highlight-color: transparent; }
     button {
       -webkit-appearance: none;
       -moz-appearance: none;
       appearance: none;
-      outline: none;
-      border: none;
+      outline: none; border: none;
     }
   </style>
-
-  <!-- Game Scripts -->
-  <script src="js/arcade-detection.js"></script>
-  <script src="lib/quintus.js"></script>
-  <script src="lib/quintus_input.js"></script>
-  <script src="lib/quintus_scenes.js"></script>
-  <script src="lib/quintus_sprites.js"></script>
-  <script src="lib/quintus_touch.js"></script>
-  <script src="lib/quintus_ui.js"></script>
-  <script src="lib/quintus_tmx.js"></script>
-  <script src="lib/quintus_2d.js"></script>
-  <script src="lib/quintus_anim.js"></script>
-  <script src="lib/quintus_audio.js"></script>
-  <script src="js/game.js"></script>
-  <script src="js/nugget.js"></script>
-  <script src="js/defaultenemy.js"></script>
-  <script src="js/tangledyarn.js"></script>
-  <script src="js/cat.js"></script>
-  <script src="js/princessmabel.js"></script>
-  <script src="js/yarnball.js"></script>
-  <script src="js/endgame.js"></script>
-  <script src="js/maintitle.js"></script>
-  <script src="js/worldmap.js"></script>
-  <script src="js/level1.js"></script>
-  <script src="js/hub.js"></script>
-  
 </head>
-
 <body>
   <div id="arcadeWrapper">
     <div id="arcadeMachine">
       <div class="side-speaker left"></div>
       <div class="side-speaker right"></div>
       <div class="coin-slot"></div>
-<div class="instructions">Use LEFT & RIGHT to move. Press JUMP to fly!</div>
-
+      <div class="instructions">Use LEFT & RIGHT to move. Press JUMP to fly!</div>
       <div id="marquee" class="arcade-text arcade-glow">
         <h1>YDT BARNYARD BUDDIES</h1>
       </div>
-
       <div id="screenBezel" class="crt-flicker">
         <div id="screenContainer">
           <div id="hudDisplay" class="high-score-display">COINS: 0</div>
@@ -104,12 +52,11 @@
           <div class="scanlines"></div>
         </div>
       </div>
-
-<div class="button-row">
-  <button class="arcadeButton small" id="leftBtn"></button>
-  <button class="arcadeButton small" id="rightBtn"></button>
-</div>
-
+      <div id="controlPanel">
+        <div class="button-row">
+          <button class="arcadeButton small" id="leftBtn"></button>
+          <button class="arcadeButton small" id="rightBtn"></button>
+        </div>
         <div class="button-row">
           <button class="arcadeButton red" id="jumpBtn"></button>
         </div>
@@ -121,16 +68,13 @@
     </div>
   </div>
 
-  <!-- Fixed Control & Input Setup -->
   <script>
-    // Prevent default touch behaviors on mobile
     document.addEventListener('touchstart', function(e) {
       if (e.target.closest('#controlPanel') || e.target.closest('#gameFrame')) {
         e.preventDefault();
       }
     }, { passive: false });
 
-    // Create and dispatch keyboard events that Quintus can understand
     function simulateKey(keyCode, key, isDown) {
       const event = new KeyboardEvent(isDown ? 'keydown' : 'keyup', {
         bubbles: true,
@@ -141,99 +85,18 @@
         code: key,
         charCode: isDown ? 0 : keyCode
       });
-      
-      // Dispatch to canvas, document, and window to ensure it's caught
       const canvas = document.getElementById('gameFrame');
       if (canvas) canvas.dispatchEvent(event);
       document.dispatchEvent(event);
       window.dispatchEvent(event);
     }
 
-      const updateJoystick = (e) => {
-        if (!active) return;
-        e.preventDefault();
-        
-        const rect = container.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const touchX = e.touches ? e.touches[0].clientX : e.clientX;
-        const deltaX = touchX - startX;
-        
-        // Limit movement to horizontal axis only, with boundaries
-        const maxMove = rect.width / 2 - 25;
-        const moveX = Math.max(-maxMove, Math.min(maxMove, deltaX));
-        
-        // Apply transform
-        joystickEl.style.transform = `translate(${moveX}px, 0)`;
-
-        // Determine direction
-        let newDirection = null;
-        if (moveX < -15) newDirection = 'left';
-        else if (moveX > 15) newDirection = 'right';
-
-        // Only send events when direction changes
-        if (newDirection !== currentDirection) {
-          // Release previous direction
-          if (currentDirection === 'left') simulateKey(37, 'ArrowLeft', false);
-          if (currentDirection === 'right') simulateKey(39, 'ArrowRight', false);
-          
-          // Press new direction
-          if (newDirection === 'left') simulateKey(37, 'ArrowLeft', true);
-          if (newDirection === 'right') simulateKey(39, 'ArrowRight', true);
-          
-          currentDirection = newDirection;
-        }
-      };
-
-      const start = (e) => {
-        e.preventDefault();
-        active = true;
-        
-        // Store the starting position
-        const rect = container.getBoundingClientRect();
-        startX = e.touches ? e.touches[0].clientX : e.clientX;
-        
-        // Reset joystick to center first
-        joystickEl.style.transform = 'translate(0, 0)';
-      };
-
-      const end = (e) => {
-        e.preventDefault();
-        active = false;
-        
-        // Animate back to center
-        joystickEl.style.transition = 'transform 0.2s ease-out';
-        joystickEl.style.transform = 'translate(0, 0)';
-        
-        // Remove transition after animation
-        setTimeout(() => {
-          joystickEl.style.transition = '';
-        }, 200);
-        
-        // Release any pressed direction
-        if (currentDirection === 'left') simulateKey(37, 'ArrowLeft', false);
-        if (currentDirection === 'right') simulateKey(39, 'ArrowRight', false);
-        currentDirection = null;
-      };
-
-      // Touch events
-      container.addEventListener('touchstart', start, { passive: false });
-      window.addEventListener('touchmove', updateJoystick, { passive: false });
-      window.addEventListener('touchend', end, { passive: false });
-      window.addEventListener('touchcancel', end, { passive: false });
-      
-      // Mouse events
-      container.addEventListener('mousedown', start);
-      window.addEventListener('mousemove', updateJoystick);
-      window.addEventListener('mouseup', end);
-      window.addEventListener('mouseleave', end);
-    }
-
     function setupButton(buttonId, keyCode, keyName) {
       const btn = document.getElementById(buttonId);
       if (!btn) return;
-      
+
       let isPressed = false;
-      
+
       const press = (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -243,7 +106,7 @@
           btn.classList.add('pressed');
         }
       };
-      
+
       const release = (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -254,71 +117,51 @@
         }
       };
 
-      // Touch events
       btn.addEventListener('touchstart', press, { passive: false });
       btn.addEventListener('touchend', release, { passive: false });
       btn.addEventListener('touchcancel', release, { passive: false });
-      
-      // Mouse events
       btn.addEventListener('mousedown', press);
       btn.addEventListener('mouseup', release);
       btn.addEventListener('mouseleave', release);
     }
 
-function setupControls() {
-  setupButton('leftBtn', 37, 'ArrowLeft');    // Left arrow
-  setupButton('rightBtn', 39, 'ArrowRight');  // Right arrow
-  setupButton('jumpBtn', 38, 'ArrowUp');      // Up arrow
-  setupButton('startBtn', 13, 'Enter');       // Enter key
-  setupButton('pauseBtn', 27, 'Escape');      // Escape key
-}
+    function setupControls() {
+      setupButton('leftBtn', 37, 'ArrowLeft');
+      setupButton('rightBtn', 39, 'ArrowRight');
+      setupButton('jumpBtn', 38, 'ArrowUp');
+      setupButton('startBtn', 13, 'Enter');
+      setupButton('pauseBtn', 27, 'Escape');
+    }
 
-
-    // Initialize controls when everything is loaded
     window.addEventListener('load', () => {
-      setTimeout(setupControls, 100); // Small delay to ensure game is initialized
+      setTimeout(setupControls, 100);
     });
 
-    // Also setup on DOMContentLoaded as backup
     document.addEventListener('DOMContentLoaded', setupControls);
   </script>
 
-  <!-- Fixed Scaling Script -->
   <script>
     function scaleArcade() {
       const wrap = document.getElementById('arcadeWrapper');
       const machine = document.getElementById('arcadeMachine');
       const W = window.innerWidth;
       const H = window.innerHeight;
-
-      // Fixed cabinet dimensions
       const MACHINE_W = 500;
       const MACHINE_H = 900;
-      const MARQUEE_TOP = 80;  // Marquee extends above
-
-      // Calculate scale to fit screen including marquee
+      const MARQUEE_TOP = 80;
       const totalHeight = MACHINE_H + MARQUEE_TOP;
       const scaleX = W / MACHINE_W;
       const scaleY = H / totalHeight;
-      const scale = Math.min(scaleX, scaleY) * 0.95; // 0.95 for a bit of padding
-
-      // Apply scale to wrapper
+      const scale = Math.min(scaleX, scaleY) * 0.95;
       wrap.style.transform = `scale(${scale})`;
     }
-
-    // Initial scale and on resize
     window.addEventListener('resize', scaleArcade);
     window.addEventListener('load', scaleArcade);
     window.addEventListener('orientationchange', scaleArcade);
-    scaleArcade(); // Call immediately
-
-    // Prevent pinch zoom on mobile
-    document.addEventListener('gesturestart', function(e) {
-      e.preventDefault();
-    });
+    scaleArcade();
+    document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
   </script>
 
-  <!-- Button visual feedback -->
   <style>
     .arcadeButton.pressed {
       transform: translateY(3px);
