@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0.0" orientation="orthogonal" renderorder="right-down" width="160" height="18" tilewidth="34" tileheight="34" nextobjectid="49">
- <tileset firstgid="1" source="../../../../Documents/Tiles.tsx"/>
+ <tileset firstgid="1" source="../images/tiles.png"/>
  <imagelayer name="background">
   <image source="../images/bg.png" width="5441" height="600"/>
  </imagelayer>
