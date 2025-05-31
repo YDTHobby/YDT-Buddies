@@ -53,6 +53,7 @@ function loadLevel1(Q) {
         Q.stageScene('HUB', 1);
         
         // Start the music
+        Q.audio.stop(); // Stop all current sounds
         Q.audio.play('music_main.mp3', { loop: true });
     });
 }
