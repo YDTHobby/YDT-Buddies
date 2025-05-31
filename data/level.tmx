@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0.0" orientation="orthogonal" renderorder="right-down" width="160" height="18" tilewidth="34" tileheight="34" nextobjectid="49">
  <tileset firstgid="1" name="tiles" tilewidth="34" tileheight="34" tilecount="49" columns="7">
-  <image source="G:/My Drive/Products/Crochet/Barnyard Buddies/Games/YDT Buddies/YDT-Buddies-2/images/tiles.png" width="256" height="256"/>
+  <image source="../images/tiles.png" width="256" height="256"/>
  </tileset>
  <tileset firstgid="50" source="../../../../Documents/Tiles.tsx"/>
  <imagelayer name="background">
