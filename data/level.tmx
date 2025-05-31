@@ -5,7 +5,7 @@
  </tileset>
  <tileset firstgid="50" source="../../../../Documents/Tiles.tsx"/>
  <imagelayer name="background">
-  <image source="G:/My Drive/Products/Crochet/Barnyard Buddies/Games/YDT Buddies/Assets/bg.png" width="5441" height="600"/>
+  <image source="../images/bg.png" width="5441" height="600"/>
  </imagelayer>
  <layer name="Collision" width="160" height="18">
   <properties>
