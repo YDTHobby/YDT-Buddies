@@ -8,7 +8,8 @@ function loadNugget(Q) {
         'stand_left': { frames: [14], loop: false },
         'jumping_right': { frames: [4], loop: false },
         'jumping_left': { frames: [18], loop: false },
-        'die': { frames: [12], loop: false }
+        'die': { frames: [12], loop: false },
+        'kiss': { frames: [5, 6, 7], rate: 1/5, loop: false }
     });
     /**
      * Class representing Nugget.
@@ -40,7 +41,8 @@ function loadNugget(Q) {
                  * Additional attributes.
                  */
                 die: false,
-                move: true
+                move: true,
+                isKissing: false
             });
             /**
              * The necessary Quintus modules.
@@ -51,6 +53,7 @@ function loadNugget(Q) {
              */
             this.on('die');
             this.on('win');
+            this.on('kiss');
         },
         /**
          * nugget dies.
@@ -83,6 +86,18 @@ function loadNugget(Q) {
             Q.stageScene('endGame', 1, { label: 'You Win' });
         },
         /**
+         * Handle kiss animation
+         */
+        kiss: function() {
+            this.p.isKissing = true;
+            this.p.move = false;
+            this.play('kiss');
+            // After kiss animation completes, trigger win
+            setTimeout(() => {
+                this.trigger('win');
+            }, 1000);
+        },
+        /**
          * Execute a nugget step.
          */
         step: function(dt) {
@@ -93,6 +108,9 @@ function loadNugget(Q) {
                 this.play('die');
                 this.p.speed = 0;
                 this.p.jumpSpeed = 0;
+            } else if (this.p.isKissing) {
+                // Keep playing kiss animation
+                this.play('kiss');
             } else {
                 /**
                  * Normal movement.
