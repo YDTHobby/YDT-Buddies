@@ -3,77 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>YDT Barnyard Buddies - Arcade Machine</title>
+  <title>YDT Barnyard Buddies</title>
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/arcade-style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     html, body {
-      width: 100%; height: 100%; margin: 0; padding: 0;
+      width: 100%; 
+      height: 100%; 
+      margin: 0; 
+      padding: 0;
       overflow: hidden;
-      font-family: 'Courier New', monospace;
-      background: #1a1a1a;
       touch-action: none;
-      -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
+      -webkit-user-select: none; 
+      -moz-user-select: none; 
+      -ms-user-select: none; 
+      user-select: none;
     }
-    #arcadeWrapper {
-      width: 100vw; height: 100vh;
-      display: flex; justify-content: center; align-items: center;
-      transform-origin: center center;
+    #gameContainer {
+      width: 100vw; 
+      height: 100vh;
+      display: flex; 
+      justify-content: center; 
+      align-items: center;
     }
-    #arcadeMachine {
-      width: 500px !important; height: 900px !important; position: relative;
-    }
-    #leftBtn::after { content: 'LEFT'; }
-    #rightBtn::after { content: 'RIGHT'; }
-    * { -webkit-tap-highlight-color: transparent; }
-    button {
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      appearance: none;
-      outline: none; border: none;
-    }
-    .arcadeButton.pressed {
-      transform: translateY(3px);
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5), inset 0 -2px 5px rgba(0, 0, 0, 0.3);
+    * { 
+      -webkit-tap-highlight-color: transparent; 
     }
   </style>
 </head>
 <body>
-  <div id="arcadeWrapper">
-    <div id="arcadeMachine">
-      <div class="side-speaker left"></div>
-      <div class="side-speaker right"></div>
-      <div class="coin-slot"></div>
-      <div class="instructions">Use LEFT & RIGHT to move. Press JUMP to fly!</div>
-      <div id="marquee" class="arcade-text arcade-glow">
-        <h1>YDT BARNYARD BUDDIES</h1>
-      </div>
-      <div id="screenBezel" class="crt-flicker">
-        <div id="screenContainer">
-          <div id="hudDisplay" class="high-score-display">COINS: 0</div>
-          <canvas id="gameFrame" width="320" height="480"></canvas>
-          <div class="scanlines"></div>
-        </div>
-      </div>
-      <div id="controlPanel">
-        <div class="button-row">
-          <button class="arcadeButton small" id="leftBtn"></button>
-          <button class="arcadeButton small" id="rightBtn"></button>
-        </div>
-        <div class="button-row">
-          <button class="arcadeButton red" id="jumpBtn"></button>
-        </div>
-        <div class="button-row">
-          <button class="arcadeButton small green" id="startBtn"></button>
-          <button class="arcadeButton small blue" id="pauseBtn"></button>
-        </div>
-      </div>
-    </div>
+  <div id="gameContainer">
+    <canvas id="gameFrame" width="320" height="480"></canvas>
   </div>
 
   <!-- Load Quintus engine and game scripts -->
-  <script src="js/arcade-detection.js"></script>
   <script src="lib/quintus.js"></script>
   <script src="lib/quintus_input.js"></script>
   <script src="lib/quintus_scenes.js"></script>
@@ -98,10 +60,10 @@
   <script src="js/level1.js"></script>
   <script src="js/hub.js"></script>
 
-  <!-- Input button simulation -->
+  <!-- Input handling -->
   <script>
     document.addEventListener('touchstart', function(e) {
-      if (e.target.closest('#controlPanel') || e.target.closest('#gameFrame')) {
+      if (e.target.closest('#gameFrame')) {
         e.preventDefault();
       }
     }, { passive: false });
@@ -122,76 +84,18 @@
       window.dispatchEvent(event);
     }
 
-    function setupButton(buttonId, keyCode, keyName) {
-      const btn = document.getElementById(buttonId);
-      if (!btn) return;
-
-      let isPressed = false;
-
-      const press = (e) => {
+    // Keyboard controls
+    document.addEventListener('keydown', function(e) {
+      if ([37, 38, 39, 40].includes(e.keyCode)) {
         e.preventDefault();
-        e.stopPropagation();
-        if (!isPressed) {
-          isPressed = true;
-          simulateKey(keyCode, keyName, true);
-          btn.classList.add('pressed');
-        }
-      };
-
-      const release = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (isPressed) {
-          isPressed = false;
-          simulateKey(keyCode, keyName, false);
-          btn.classList.remove('pressed');
-        }
-      };
-
-      btn.addEventListener('touchstart', press, { passive: false });
-      btn.addEventListener('touchend', release, { passive: false });
-      btn.addEventListener('touchcancel', release, { passive: false });
-      btn.addEventListener('mousedown', press);
-      btn.addEventListener('mouseup', release);
-      btn.addEventListener('mouseleave', release);
-    }
-
-    function setupControls() {
-      setupButton('leftBtn', 37, 'ArrowLeft');
-      setupButton('rightBtn', 39, 'ArrowRight');
-      setupButton('jumpBtn', 38, 'ArrowUp');
-      setupButton('startBtn', 13, 'Enter');
-      setupButton('pauseBtn', 27, 'Escape');
-    }
-
-    window.addEventListener('load', () => {
-      setTimeout(setupControls, 100);
+      }
     });
 
-    document.addEventListener('DOMContentLoaded', setupControls);
-  </script>
-
-  <!-- Scaling logic -->
-  <script>
-    function scaleArcade() {
-      const wrap = document.getElementById('arcadeWrapper');
-      const machine = document.getElementById('arcadeMachine');
-      const W = window.innerWidth;
-      const H = window.innerHeight;
-      const MACHINE_W = 500;
-      const MACHINE_H = 900;
-      const MARQUEE_TOP = 80;
-      const totalHeight = MACHINE_H + MARQUEE_TOP;
-      const scaleX = W / MACHINE_W;
-      const scaleY = H / totalHeight;
-      const scale = Math.min(scaleX, scaleY) * 0.95;
-      wrap.style.transform = `scale(${scale})`;
-    }
-    window.addEventListener('resize', scaleArcade);
-    window.addEventListener('load', scaleArcade);
-    window.addEventListener('orientationchange', scaleArcade);
-    scaleArcade();
-    document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
+    document.addEventListener('keyup', function(e) {
+      if ([37, 38, 39, 40].includes(e.keyCode)) {
+        e.preventDefault();
+      }
+    });
   </script>
 </body>
 </html>

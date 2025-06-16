@@ -1,26 +1,12 @@
-/* Original canvas styling */
+/* Game canvas styling */
 canvas {
     background-color: black;
 }
 
-/* When displayed in arcade machine, ensure proper sizing */
-body.in-arcade canvas {
-    width: 320px !important;
-    height: 480px !important;
-    image-rendering: pixelated;
-    image-rendering: -moz-crisp-edges;
-    image-rendering: crisp-edges;
-}
-
-/* Ensure the game fits properly in iframe */
+/* Basic page setup */
 body {
     margin: 0;
     padding: 0;
-    overflow: hidden;
-}
-
-/* Hide scrollbars in arcade mode */
-body.in-arcade {
     overflow: hidden;
 }
 
