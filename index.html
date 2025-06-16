@@ -17,16 +17,73 @@
       -moz-user-select: none; 
       -ms-user-select: none; 
       user-select: none;
+      background-color: #2c2c2c;
     }
+    
     #gameContainer {
       width: 100vw; 
       height: 100vh;
       display: flex; 
       justify-content: center; 
       align-items: center;
+      background-color: #2c2c2c;
     }
+    
+    #gameFrame {
+      /* Maintain 2:3 aspect ratio (320:480) */
+      width: 320px;
+      height: 480px;
+      max-width: 95vw;
+      max-height: 95vh;
+      
+      /* Scale down uniformly if needed */
+      width: min(320px, 95vw);
+      height: min(480px, 95vh);
+      
+      /* If width constraint is tighter, use that to determine height */
+      height: min(480px, calc(95vw * 1.5));
+      
+      /* If height constraint is tighter, use that to determine width */
+      width: min(320px, calc(95vh / 1.5));
+      
+      /* Styling */
+      border: 2px solid #444;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      
+      /* Crisp pixel art rendering */
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-crisp-edges;
+    }
+    
+    /* For very wide screens, limit the maximum size */
+    @media (min-width: 1000px) and (min-height: 800px) {
+      #gameFrame {
+        width: 320px;
+        height: 480px;
+      }
+    }
+    
+    /* For very small screens, ensure minimum playable size */
+    @media (max-width: 350px) or (max-height: 500px) {
+      #gameFrame {
+        border-width: 1px;
+        border-radius: 4px;
+      }
+    }
+    
     * { 
       -webkit-tap-highlight-color: transparent; 
+    }
+
+    /* Override any Quintus container styling that might interfere */
+    #quintus_container {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
     }
   </style>
 </head>
@@ -95,6 +152,17 @@
       if ([37, 38, 39, 40].includes(e.keyCode)) {
         e.preventDefault();
       }
+    });
+
+    // Handle window resize to ensure Quintus adapts properly
+    window.addEventListener('resize', function() {
+      // Give Quintus a moment to detect the resize if it has built-in handling
+      setTimeout(function() {
+        // Trigger any Quintus resize handling if available
+        if (window.Q && Q.trigger) {
+          Q.trigger('resize');
+        }
+      }, 100);
     });
   </script>
 </body>
