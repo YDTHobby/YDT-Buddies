@@ -1,6 +1,7 @@
 /* Game canvas styling */
 canvas {
     background-color: black;
+    /* Responsive scaling handled in HTML inline styles */
 }
 
 /* Basic page setup */
@@ -8,10 +9,35 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    background-color: #2c2c2c;
 }
 
-/* Ensure Quintus container fits properly */
+/* Ensure Quintus container fits properly and doesn't interfere with responsive scaling */
 #quintus_container {
-    margin: 0;
-    padding: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Additional responsive helpers */
+* {
+    box-sizing: border-box;
+}
+
+/* Prevent text selection and highlighting on mobile */
+body, canvas {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Ensure crisp pixel rendering across browsers */
+canvas {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
 }
